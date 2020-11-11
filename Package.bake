@@ -17,4 +17,9 @@ CreateDirectory {
 	$Output/3
 }
 
+Zip $Output/Bake.zip {
+	Bake.Core/*
+	Bake/*.fs
+	Bake.Actions
+}
 

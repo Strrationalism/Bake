@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Zip.fs" />
     <Compile Include="Title.fs" />
     <Compile Include="GetDateTime.fs" />
     <Compile Include="Print.fs" />

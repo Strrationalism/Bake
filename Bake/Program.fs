@@ -27,7 +27,7 @@ let main args =
             |> Action.getActionsFromAssembly
             |> Map.ofSeq
 
-        //printfn "%A" defaultActions
+        //defaultActions |> Seq.iter (printfn "%A")
 
         let defaultActionContext = {
             script = buildScript |> List.head
@@ -71,7 +71,6 @@ let main args =
 
 // Next: 实现以下Action
 //       * Copy
-//       * Zip
 //       * Unzip
 //       * GZip
 //       * UnGZip

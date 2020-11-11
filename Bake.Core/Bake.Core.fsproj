@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Utils.fs" />
     <Compile Include="Script.fs" />
     <Compile Include="Task.fs" />
     <Compile Include="Action.fs" />

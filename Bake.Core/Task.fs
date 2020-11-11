@@ -24,6 +24,10 @@ module Task =
     let run (context: TaskContext) (task: Task) : TaskContext * Result<unit, exn> = 
         if isDirty task then 
             try
+                task.outputFiles
+                |> Seq.iter (fun x ->
+                    try System.IO.File.Delete x
+                    with _ -> ())
                 task.run context
                 { context with
                     updatedOutputFile = Seq.append context.updatedOutputFile <| Seq.map FileInfo task.outputFiles
