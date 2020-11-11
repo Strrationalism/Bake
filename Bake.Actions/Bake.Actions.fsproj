@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Delete.fs" />
     <Compile Include="Sync.fs" />
     <Compile Include="Parallel.fs" />
     <Compile Include="Include.fs" />

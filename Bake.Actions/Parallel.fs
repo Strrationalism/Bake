@@ -21,7 +21,7 @@ let Parallel = {
         | None -> raise <| ActionUsageError "Parallel must pass one argument."
         | Some block ->
             let tasks =
-                Script.parseTasks ctx.script.scriptFile block
+                Script.parseTasks ctx.script.scriptFile (block.Trim() + "\n")
                 |> function
                 | Error e -> raise e
                 | Ok x -> Action.runActions ctx x

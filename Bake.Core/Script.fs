@@ -57,7 +57,7 @@ module Script =
 
         // 单个任务的解析器
         let singleTask fileInfo = 
-            command .>>. many (simpleArgument <|> warppedArgument <|> betweenBigBrackets) .>> lineEnd
+            spaces >>. command .>>. many (simpleArgument <|> warppedArgument <|> betweenBigBrackets) .>> lineEnd
             |>> fun (cmd, args) ->
                 {
                     command = cmd.Trim()

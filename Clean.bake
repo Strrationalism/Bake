@@ -1,14 +1,16 @@
 # 这个Bake脚本将会删除BakePublish目录
 Include {
-	Common.bake
+    Common.bake
 }
 
-Delete {
-	BakePublish
-	Bake/obj
-	Bake.Core/obj
-	Bake.Core/bin
-	Bake.Actions/obj
-	Bake.Actions/bin
-	Bake/bin/Debug
+Parallel {
+	Delete {
+		BakePublish
+		Bake/obj
+		Bake.Core/obj
+		Bake.Core/bin
+		Bake.Actions/obj
+		Bake.Actions/bin
+		Bake/bin/Debug
+	}
 }

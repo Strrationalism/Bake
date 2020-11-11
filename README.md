@@ -22,7 +22,8 @@
 3. 执行构建。
 
 ## 基本可用的Actions
-
+* Delete - 删除文件和目录
+* Sync - 同步执行
 * Import - 导入Modules
 * Include - 包含子Bake脚本文件
 * Set - 用于设置一个环境变量
@@ -30,10 +31,9 @@
 * For - 将会循环执行一个脚本
 * While - 将会循环执行某个脚本直到条件不再成立
 * Parallel - 此Action内的子脚本将会并行执行
-* Parallel-Import - 导入子脚本内的全部Tasks以并行执行
 * MakeDir - 创建文件夹
 * Copy - 复制
-* Zip - 
+* Zip - 打包
 
 ## 脚本语言示例
 
