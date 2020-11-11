@@ -32,7 +32,7 @@ let Unzip = {
         |> Seq.map (fun zipFile -> 
             {
                 run = fun _ -> 
-                    lock stdout (fun () -> printfn "Decompressing %s..." zipFile)
+                    lock stdout (fun () -> printfn "Decompressing %s to %s..." zipFile targetDir)
                     use zip = ZipFile.OpenRead (zipFile)
                     zip.ExtractToDirectory (targetDir)
                 inputFiles = seq { FileInfo zipFile }
