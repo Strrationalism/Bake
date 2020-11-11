@@ -16,12 +16,23 @@ CreateDirectory {
 	$Output/2
 	$Output/3
 	$Output/Unzip
+	$Output/Copy
 }
+
+Parallel {
 
 Zip "$Output/Bake.zip" {
 	Bake.Core/*
 	Bake/*.fs
 	Bake.Actions
+}
+
+Copy $Output/Copy {
+	Bake.Core/*
+	Bake/*.fs
+	Bake.Actions
+}
+
 }
 
 Unzip "$Output/Unzip" {

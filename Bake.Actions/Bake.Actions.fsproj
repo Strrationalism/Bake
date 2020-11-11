@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Copy.fs" />
     <Compile Include="Unzip.fs" />
     <Compile Include="Zip.fs" />
     <Compile Include="Title.fs" />

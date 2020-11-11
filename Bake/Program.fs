@@ -71,7 +71,6 @@ let main args =
     
 
 // Next: 实现以下Action
-//       * Copy
 //       * GZip
 //       * UnGZip
 //       * Action
