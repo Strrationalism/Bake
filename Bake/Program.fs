@@ -72,8 +72,6 @@ let main args =
 
 // Next: 实现Dirty判断
 // Next: 实现以下Action
-//       * GZip
-//       * UnGZip
 //       * Action
 //       * Download
 //       * Http Post
@@ -86,3 +84,9 @@ let main args =
 //       * SendEMail
 //       * AESKeygen
 //       * AESEncrypt
+//       * If
+//           * Equals $a $b
+//           * Exists File $file
+//           * Exists Directory $dir
+//           * Not $Expression
+
