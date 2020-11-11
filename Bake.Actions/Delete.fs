@@ -6,6 +6,7 @@ open System.IO
 let deleteFile src fileName = {
     run = fun _ ->
         File.Delete fileName
+        lock stdout (fun () -> printfn "Delete %s" fileName)
 
     inputFiles = Seq.empty
     outputFiles = Seq.empty
@@ -18,6 +19,7 @@ let deleteFile src fileName = {
 let deleteDirectory src dirName = {
     run = fun _ ->
         Directory.Delete (dirName, true)
+        lock stdout (fun () -> printfn "Delete %s" dirName)
 
     inputFiles = Seq.empty
     outputFiles = Seq.empty

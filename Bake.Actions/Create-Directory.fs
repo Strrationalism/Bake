@@ -12,6 +12,7 @@ let createDirectoryTask (ctx: BakeActionContext) (dir: string) =
         run = fun ctx ->
             System.IO.Directory.CreateDirectory dir
             |> ignore
+            lock stdout (fun () -> printfn "CreateDirectory %s" dir)
     }
 
 [<BakeAction>]
