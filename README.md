@@ -22,16 +22,15 @@
 3. 执行构建。
 
 ## 基本可用的Actions
+* GetDateTime - 将日期和时间设置到变量中
 * Delete - 删除文件和目录
-* Sync - 同步执行
+* Atomic - 同步执行，如果块中失败，则停止所有后续操作
 * Import - 导入Modules
+* Action - 创建一个动作
 * Include - 包含子Bake脚本文件
 * Set - 用于设置一个环境变量
-* If - 如果条件成立则执行子脚本
-* For - 将会循环执行一个脚本
-* While - 将会循环执行某个脚本直到条件不再成立
 * Parallel - 此Action内的子脚本将会并行执行
-* MakeDir - 创建文件夹
+* CreateDirectory - 创建文件夹
 * Copy - 复制
 * Zip - 打包
 

@@ -8,6 +8,7 @@ let main args =
             match args with
             | [||] -> 
                 [
+                    "Bake.bake"
                     "BuildScript.bake"
                     "Build.bake"
                     "Package.bake"
@@ -26,6 +27,8 @@ let main args =
             |> Action.getActionsFromAssembly
             |> Map.ofSeq
 
+        //printfn "%A" defaultActions
+
         let defaultActionContext = {
             script = buildScript |> List.head
             variables = ref Map.empty
@@ -43,7 +46,7 @@ let main args =
 
         buildScript
         |> Action.runActions defaultActionContext
-        |> Seq.fold Task.run defaultTaskContext
+        |> Seq.fold (fun (ctx, errno) t -> Task.run ctx t) (defaultTaskContext, Ok ())
         |> ignore
 
         timer.Stop ()
@@ -55,6 +58,12 @@ let main args =
     | Script.ParsingError e ->
         printfn "Parsing Error:%s" e
         -1
+    | Action.ActionNotFound e ->
+        printfn "Action Not Found:%s" e
+        -1
+    | Action.ActionUsageError e ->
+        printfn "Action Usage Error:%s" e
+        -1
     | e ->
         printfn "Error:%s" e.Message 
         -1
@@ -63,4 +72,18 @@ let main args =
 // Next: 实现以下Action
 //       * Copy
 //       * Zip
-//       * Function
+//       * Unzip
+//       * GZip
+//       * UnGZip
+//       * Action
+//       * Download
+//       * Http Post
+//       * Compile C#
+//       * Compile F#
+//       * Compile VB
+//       * PowerShell
+//       * Run
+//       * Start
+//       * SendEMail
+//       * AESKeygen
+//       * AESEncrypt

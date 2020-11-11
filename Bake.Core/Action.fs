@@ -20,8 +20,6 @@ and BakeActionContext = {
     actions : Map<string, BakeAction> ref
 }
 
-exception ActionUsageError of string
-
 module Action =
     exception MethodIsNotAnException of string
     let getActionsFromAssembly (assembly: Assembly) =
@@ -55,6 +53,8 @@ module Action =
         >> Script.trimLines
         >> Seq.map (applyContextToArgument ctx)
         >> Seq.collect (createTask ctx)
+
+    exception ActionUsageError of string
 
     // 一个只具有一个{}参数的指令，它每一行为一个Task，可使用此函数创建Action
     let singleBlockArgumentAction createTask ctx =

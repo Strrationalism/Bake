@@ -16,7 +16,7 @@ let Set = {
     ]
     
     action = fun ctx ->
-        if ctx.script.arguments.Length <> 2 then raise <| ActionUsageError "Set必须有两个参数。"
+        if ctx.script.arguments.Length <> 2 then raise <| Action.ActionUsageError "Set必须有两个参数。"
         else 
             let variableName = ctx.script.arguments.[0].Trim().TrimStart('$')
             let value = ctx.script.arguments.[1].Trim() |> Action.applyContextToArgument ctx

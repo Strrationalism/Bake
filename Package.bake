@@ -1,8 +1,16 @@
-# 这个文件用于对Bake进行打包和发布
+Title "Bake Building System"
+
+GetDateTime $Now
+Print {     
+=== 这个文件用于对Bake进行打包和发布 ===
+--- This file will be used to packing and publishing 'Bake' building system. ---
+
+Now: $Now
+}
 
 Include "Common.bake"
 
-Create-Directory {
+CreateDirectory {
 	$Output
 	$Output/1
 	$Output/2

@@ -41,7 +41,7 @@ module Script =
         let betweenBigBracketsWithBrackets, betweenBigBracketsWithBracketsRef = createParserForwardedToRef ()
         let betweenBigBrackets =
             between (pstring "{") (pstring "}") 
-                    (many (betweenBigBracketsWithBrackets <|> many1Satisfy (isNoneOf ['{';'}'])))
+                    (many (many1Satisfy (isNoneOf ['{';'}']) <|> betweenBigBracketsWithBrackets))
             |>> List.reduce (+)
             .>> spaces
         

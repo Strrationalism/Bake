@@ -1,4 +1,4 @@
-﻿module Bake.Actions.``Create-Directory``
+﻿module Bake.Actions.CreateDirectory
 
 open Bake
 
@@ -10,13 +10,14 @@ let createDirectoryTask (ctx: BakeActionContext) (dir: string) =
         source = ctx.script
 
         run = fun ctx ->
-            System.IO.Directory.CreateDirectory dir
-            |> ignore
-            lock stdout (fun () -> printfn "CreateDirectory %s" dir)
+            if not <| System.IO.Directory.Exists dir then
+                System.IO.Directory.CreateDirectory dir
+                |> ignore
+                lock stdout (fun () -> printfn "Create-Directory %s" dir)
     }
 
 [<BakeAction>]
-let ``Create-Directory`` = {
+let ``CreateDirectory`` = {
     help = "创建文件夹"
 
     usage = [

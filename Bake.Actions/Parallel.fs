@@ -18,7 +18,7 @@ let Parallel = {
         ctx.script.arguments
         |> Seq.tryExactlyOne
         |> function
-        | None -> raise <| ActionUsageError "Parallel must pass one argument."
+        | None -> raise <| Action.ActionUsageError "Parallel must pass one argument."
         | Some block ->
             let tasks =
                 Script.parseTasks ctx.script.scriptFile (block.Trim() + "\n")
