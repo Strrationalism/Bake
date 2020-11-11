@@ -2,29 +2,40 @@
 
 open System.IO
 
-type Context = {
+type TaskContext = {
     updatedOutputFile : FileInfo seq
-    mutable variables : Map<string, string>
+    errorMessages : exn list ref
 }
 
 and Task = {
-    run : Context -> unit
+    run : TaskContext -> unit
 
     inputFiles : FileInfo seq
-    outputFiles : FileInfo seq
+    outputFiles : string seq
 
-    forceUpdate : bool
+    dirty : bool
 
-    script : Script
+    source : Script
 }
 
 module Task = 
     let isDirty x = true  // Task -> bool
 
-    let run (context: Context) (task: Task) : Context = 
-        if isDirty task || task.forceUpdate then 
-            task.run context
-            { context with
-                updatedOutputFile = Seq.append context.updatedOutputFile task.outputFiles
-            }
+    let run (context: TaskContext) (task: Task) : TaskContext = 
+        if isDirty task then 
+            try
+                task.run context
+                { context with
+                    updatedOutputFile = Seq.append context.updatedOutputFile <| Seq.map FileInfo task.outputFiles
+                }
+            with e -> 
+                task.outputFiles
+                |> Seq.iter (fun x -> 
+                    try System.IO.File.Delete x
+                    with _ -> ())
+                lock context.errorMessages (fun () -> context.errorMessages := e::!context.errorMessages)
+                context
+            
         else context
+
+

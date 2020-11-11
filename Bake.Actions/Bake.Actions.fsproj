@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Sync.fs" />
+    <Compile Include="Parallel.fs" />
+    <Compile Include="Include.fs" />
+    <Compile Include="Import.fs" />
+    <Compile Include="Set.fs" />
+    <Compile Include="Create-Directory.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Bake.Core\Bake.Core.fsproj" />
+  </ItemGroup>
+
+</Project>

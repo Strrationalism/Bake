@@ -7,7 +7,7 @@
   <ItemGroup>
     <Compile Include="Script.fs" />
     <Compile Include="Task.fs" />
-    <Compile Include="Utils.fs" />
+    <Compile Include="Action.fs" />
   </ItemGroup>
 
   <ItemGroup>

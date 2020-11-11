@@ -1,0 +1,12 @@
+# 这个文件用于对Bake进行打包和发布
+
+Include "Common.bake"
+
+Create-Directory {
+	$Output
+	$Output/1
+	$Output/2
+	$Output/3
+}
+
+

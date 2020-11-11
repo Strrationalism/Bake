@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Bake": {
+      "commandName": "Project",
+      "workingDirectory": "$(SolutionDir)"
+    }
+  }
+}

@@ -1,6 +1,6 @@
 ﻿
 open Bake
-(*
+
 [<EntryPoint>]
 let main args =
     let buildScript =
@@ -9,26 +9,40 @@ let main args =
             [
                 "BuildScript.bake"
                 "Build.bake"
-                "Assets/Build.bake"
-                "Assets/BuildScript.bake"
+                "Package.bake"
             ]
             |> List.find System.IO.File.Exists
         | [|a|] -> a
         | _ -> failwithf "Not support"
         |> System.IO.FileInfo
+        |> Script.parseFromFile
+        |> function
+        | Ok x -> x
+        | Error e -> raise e
 
-    let defaultContext = {
+    let defaultActions = 
+        System.Reflection.Assembly.Load("Bake.Actions")
+        |> Action.getActionsFromAssembly
+        |> Map.ofSeq
+
+    let defaultActionContext = {
+        script = buildScript |> List.head
+        variables = ref Map.empty
+        actions = ref defaultActions
+    }
+
+    let defaultTaskContext = {
         updatedOutputFile = []
+        errorMessages = ref []
     }
     
-    let rootTasks =
-        Parser.parseFromFile buildScript
     
     let timer = System.Diagnostics.Stopwatch ()
     timer.Start ()
 
-    rootTasks
-    |> List.fold Task.run defaultContext
+    buildScript
+    |> Action.runActions defaultActionContext
+    |> Seq.fold Task.run defaultTaskContext
     |> ignore
 
     timer.Stop ()
@@ -36,17 +50,9 @@ let main args =
     printfn "Build Time: %A" timer.Elapsed
 
     0
-    *)
-Script.parseFromFile (System.IO.FileInfo "c:/repos/t.txt")
-|> List.iter (printfn "%A")
+    
 
-// Next: 实现ActionAttribute和以下Action
-// Next: 完善文档，总结Module、Action和Task的概念（Module包含Actions，Actions创建Tasks，Tasks经过IsDirty过滤后执行）
 // Next: 实现以下Action
-//       * Set
-//       * Import
-//       * Parallel
-//       * Include
-//       * MakeDir
 //       * Copy
 //       * Zip
+//       * Function

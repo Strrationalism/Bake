@@ -11,6 +11,8 @@ type Script = {
 }
 
 module Script = 
+    exception ParsingError of string
+
     let parseTasks fileInfo script = 
         let spaces = anyOf [' ';'\t'] |> many |>> ignore    // 空格
 
@@ -58,16 +60,28 @@ module Script =
             command .>>. many (simpleArgument <|> warppedArgument <|> betweenBigBrackets) .>> lineEnd
             |>> fun (cmd, args) ->
                 {
-                    command = cmd
+                    command = cmd.Trim()
                     arguments = args
                     scriptFile = fileInfo
                 }
         let tasks fileInfo = many (many lineEnd >>. singleTask fileInfo .>> many lineEnd) .>> eof
 
         match run (tasks fileInfo) script with
-        | Success(ls, _, _) -> ls
-        | Failure(x, _, _) -> failwithf "%s" x
+        | Success(ls, _, _) -> Result.Ok ls
+        | Failure(msg, _, _) -> Result.Error <| ParsingError msg
 
     let parseFromFile (fileInfo: FileInfo) = 
         parseTasks fileInfo <| File.ReadAllText fileInfo.FullName
+
+    let trimLineComment (line: string) = 
+        let x = line + "#"
+        x.[..(x.IndexOf '#') - 1]
+
+    let lines (text: string) = 
+        text.Split ('\r', '\n')
+
+    let trimLines (lines: string seq) = 
+        lines
+        |> Seq.map (fun x -> x.Trim())
+        |> Seq.filter (not << System.String.IsNullOrWhiteSpace)
 
