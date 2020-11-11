@@ -28,6 +28,7 @@ let main args =
             |> Map.ofSeq
 
         //defaultActions |> Seq.iter (printfn "%A")
+        //buildScript |> Seq.iter (printfn "%A")
 
         let defaultActionContext = {
             script = buildScript |> List.head
@@ -65,13 +66,12 @@ let main args =
         printfn "Action Usage Error:%s" e
         -1
     | e ->
-        printfn "Error:%s" e.Message 
+        printfn "Error:%A" e 
         -1
     
 
 // Next: 实现以下Action
 //       * Copy
-//       * Unzip
 //       * GZip
 //       * UnGZip
 //       * Action

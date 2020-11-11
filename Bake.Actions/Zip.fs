@@ -26,6 +26,8 @@ let Zip = {
             |> Seq.map Script.trimLineComment
             |> Script.trimLines
             |> Seq.collect (Utils.mapPathToOutputPath ctx.script.scriptFile.DirectoryName)
+            |> Seq.distinctBy snd
+            |> Seq.toArray
 
         seq { {
             run = fun _ ->
@@ -35,7 +37,7 @@ let Zip = {
                 use zip = ZipFile.Open (targetZip, ZipArchiveMode.Create)
                 for (file, name) in files do
                     lock stdout (fun () -> printfn "Compressing %s ..." name)
-                    zip.CreateEntryFromFile(file, name) |> ignore
+                    zip.CreateEntryFromFile(file, name.Replace('\\','/')) |> ignore
 
             inputFiles = files |> Seq.map (fst >> FileInfo)
             source = ctx.script

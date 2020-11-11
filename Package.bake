@@ -15,11 +15,15 @@ CreateDirectory {
 	$Output/1
 	$Output/2
 	$Output/3
+	$Output/Unzip
 }
 
-Zip $Output/Bake.zip {
+Zip "$Output/Bake.zip" {
 	Bake.Core/*
 	Bake/*.fs
 	Bake.Actions
 }
 
+Unzip "$Output/Unzip" {
+	$Output/Bake.zip
+}
