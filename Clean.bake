@@ -5,7 +5,7 @@ Include {
 
 Parallel {
 	Delete {
-		BakePublish
+		$Output
 		Bake/obj
 		Bake.Core/obj
 		Bake.Core/bin
