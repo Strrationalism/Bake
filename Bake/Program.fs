@@ -5,7 +5,7 @@ open Bake
 let processError fmt =
     Console.ForegroundColor <- ConsoleColor.Red
     Console.Beep ()
-    Printf.kprintf (fun _ -> Console.ResetColor (); -1) fmt
+    printfn fmt
 
 [<EntryPoint>]
 let main args =
@@ -67,12 +67,31 @@ let main args =
 
         0
     with 
-    | Parser.ParsingError e -> processError "Parsing Error:%s" e
-    | Action.ActionNotFound e -> processError "Action Not Found:%s" e
-    | Action.ActionUsageError e -> processError "Action Usage Error:%s" e
+    | Parser.ParsingError e -> 
+        processError "Parsing Error:%s" e
+        Console.ResetColor ()
+        -1
+    | Action.ActionNotFound e -> 
+        processError "Action Not Found:%s" e
+        Console.ResetColor ()
+        -2
+    | Action.ActionUsageError e -> 
+        processError "Action Usage Error:%s" e
+        Console.ResetColor ()
+        -3
     | Action.ActionException (script, ctx, e) ->
         processError "Action Error:%s\n\n%A\n\n%A\n\n%A" e.Message e script ctx
+        Console.ResetColor ()
+        -4
     | Task.TaskException (task, e) ->
         processError "Task Error:%s\n\n%A\n\n%A" e.Message e task
-    | e -> processError "Error:%A" e 
+        Console.ResetColor ()
+        -5
+    | e -> 
+        processError "Error:%A" e 
+        Console.ResetColor ()
+        -6
+
+    
+
 

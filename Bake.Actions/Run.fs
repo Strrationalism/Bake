@@ -26,7 +26,7 @@ let runTask echo waitForExit script (command: string seq) = {
         command
         |> Seq.iter (fun cmd ->
             if echo then lock stdout (fun () -> printfn "%s" cmd)
-            run waitForExit cmd script.scriptFile.Directory.FullName)
+            run waitForExit script.scriptFile.Directory.FullName cmd)
 }
 
 let runAction echo waitForExit = fun ctx script -> 
