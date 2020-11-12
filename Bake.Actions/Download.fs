@@ -3,16 +3,18 @@
 open Bake
 open System.Net
 
+let downloadFile (url: string) targetFile =
+    use webClient = new WebClient ()
+    webClient.DownloadFile (url, targetFile)
+
 let downloadTask echo (targetDir: string) script (url: string) = 
     let fileName = url.[1 + url.LastIndexOf '/'..]
     let targetDir = targetDir.Trim().Trim('\\', '/') + "/"
     let targetFile = targetDir + fileName
     {
         run = fun () ->
-            
             if echo then lock stdout (fun () -> printfn "Downloading %s..." fileName)
-            use webClient = new WebClient ()
-            webClient.DownloadFile (url, targetFile)
+            downloadFile url targetFile
         inputFiles = Seq.empty
         outputFiles = seq { targetFile }
         dirty = true

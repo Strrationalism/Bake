@@ -4,7 +4,7 @@ open Bake
 [<EntryPoint>]
 let main args =
     try
-        let buildScript =
+        let buildScriptFile =
             match args with
             | [||] -> 
                 [
@@ -17,6 +17,9 @@ let main args =
             | [|a|] -> [ a; a + ".bake" ] |> List.find System.IO.File.Exists
             | _ -> failwithf "Not support"
             |> System.IO.FileInfo
+
+        let buildScript =
+            buildScriptFile
             |> Parser.parseFromFile
             |> function
             | Ok x -> x
@@ -32,7 +35,10 @@ let main args =
         //buildScript |> Seq.iter (printfn "%A")
 
         let context = {
-            variables = Map.empty
+            variables = 
+                Map.empty
+                |> Map.add "StartDir" buildScriptFile.Directory.FullName
+                |> Map.add "CurrentDir" System.Environment.CurrentDirectory
             actions = defaultActions
 
             runChildBlock = Bake.Actions.Sync.syncBlockRunner

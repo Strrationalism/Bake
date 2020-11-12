@@ -4,6 +4,19 @@ open Bake
 
 exception ExitCodeIsNotZero of int
 
+let run waitForExit workingDir (cmd: string) =
+    let cmd, args = let cells = cmd.Split ' ' in cells.[0], cells.[1..]
+    let args = Array.reduce (fun a b -> a + " " + b) args
+
+    let startInfo = new System.Diagnostics.ProcessStartInfo ()
+    startInfo.FileName <- cmd
+    startInfo.Arguments <- args
+    startInfo.WorkingDirectory <- workingDir
+
+    let prc = System.Diagnostics.Process.Start startInfo
+    if waitForExit then prc.WaitForExit ()
+    if prc.ExitCode <> 0 then raise <| ExitCodeIsNotZero prc.ExitCode
+
 let runTask echo waitForExit script (command: string seq) = {
     inputFiles = Seq.empty
     outputFiles = Seq.empty
@@ -13,17 +26,7 @@ let runTask echo waitForExit script (command: string seq) = {
         command
         |> Seq.iter (fun cmd ->
             if echo then lock stdout (fun () -> printfn "%s" cmd)
-            let cmd, args = let cells = cmd.Split ' ' in cells.[0], cells.[1..]
-            let args = Array.reduce (fun a b -> a + " " + b) args
-
-            let startInfo = new System.Diagnostics.ProcessStartInfo ()
-            startInfo.FileName <- cmd
-            startInfo.Arguments <- args
-            startInfo.WorkingDirectory <- script.scriptFile.Directory.FullName
-
-            let prc = System.Diagnostics.Process.Start startInfo
-            if waitForExit then prc.WaitForExit ()
-            if prc.ExitCode <> 0 then raise <| ExitCodeIsNotZero prc.ExitCode)
+            run waitForExit cmd script.scriptFile.Directory.FullName)
 }
 
 let runAction echo waitForExit = fun ctx script -> 

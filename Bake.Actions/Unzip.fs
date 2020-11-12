@@ -33,11 +33,12 @@ let Unzip = {
     action = fun ctx script -> 
         if script.arguments.Length <> 2 then raise <| Action.ActionUsageError "Unzip必须有两个参数。"
 
+        let srcDir = script.scriptFile.Directory.FullName.Trim().Trim('\\', '/') + "/"
         let targetDir = script.arguments.[0].Trim() |> Action.applyContextToArgument ctx
         let targetDir = targetDir.TrimEnd('\\', '/') + "/"
 
         Action.blockArgumentTaskPerLine (fun _ script zip ->
-            seq { unzipTask true script targetDir zip }) ctx script script.arguments.[1],
+            seq { unzipTask true script targetDir <| srcDir + zip }) ctx script script.arguments.[1],
         ctx
 }
 
