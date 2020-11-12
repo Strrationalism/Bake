@@ -7,7 +7,7 @@ GetDateTime $DateTime
 
 Set $PublishToPlatform "dotnet publish Bake/Bake.fsproj -c Release"
 Run {
-	$PublishToPlatform -p:PublishTrimmed=true -p:PublishReadyToRun=true -f net472
+	$PublishToPlatform -p:PublishTrimmed=true -f net472
 	$PublishToPlatform -r osx-x64 -f netcoreapp3.1
 	$PublishToPlatform -p:PublishTrimmed=true -r linux-x64 -f netcoreapp3.1
 

@@ -20,7 +20,7 @@ let Set = {
     ]
     
     action = fun ctx script ->
-        if script.arguments.Length <> 2 then raise <| Action.ActionUsageError "Set必须有两个参数。"
+        if script.arguments.Length <> 2 then raise <| Action.ActionUsageError "Set must be pass one argument."
         else 
             let name = script.arguments.[0].Trim().TrimStart('$')
             let value = script.arguments.[1].Trim() |> Action.applyContextToArgument ctx

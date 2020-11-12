@@ -27,7 +27,7 @@ let runTask echo waitForExit script (command: string seq) = {
 }
 
 let runAction echo waitForExit = fun ctx script -> 
-    if script.arguments.Length <> 1 then raise <| Action.ActionUsageError "Run只能具有一个参数。"
+    if script.arguments.Length <> 1 then raise <| Action.ActionUsageError "Run must be pass 1 argument."
 
     let command =
         script.arguments.Head

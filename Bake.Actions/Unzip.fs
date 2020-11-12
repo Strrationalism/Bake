@@ -35,15 +35,9 @@ let Unzip = {
 
         let targetDir = script.arguments.[0].Trim() |> Action.applyContextToArgument ctx
         let targetDir = targetDir.TrimEnd('\\', '/') + "/"
-        let zipFiles = 
-            script.arguments.[1] |> Action.applyContextToArgument ctx
-            |> Script.lines
-            |> Seq.map Script.trimLineComment
-            |> Script.trimLines
-        
 
-        zipFiles
-        |> Seq.map (unzipTask true script targetDir),
+        Action.blockArgumentTaskPerLine (fun _ script zip ->
+            seq { unzipTask true script targetDir zip }) ctx script script.arguments.[1],
         ctx
 }
 

@@ -67,13 +67,10 @@ let main args =
 
 // Next: 实现Dirty判断
 // Next: 实现以下Action
-//       * Download
-//       * PowerShell
-//       * AESKeygen
-//       * AESEncrypt
 //       * If
 //           * Equals $a $b
 //           * Exists File $file
 //           * Exists Directory $dir
 //           * Not $Expression
+//           * $SrcFiles Newer $DstFiles
 

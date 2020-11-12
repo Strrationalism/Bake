@@ -49,7 +49,7 @@ module Action =
         |> Map.fold (fun (text: string) k v -> text.Replace("$" + k, v)) text
 
     // 根据{}参数中每一行单独创建一个Task
-    let blockArgumentTaskPerLine createTask ctx script =
+    let blockArgumentTaskPerLine createTask ctx (script: Script) =
         Script.lines
         >> Seq.map Script.trimLineComment
         >> Script.trimLines

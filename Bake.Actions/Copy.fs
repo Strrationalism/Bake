@@ -31,20 +31,15 @@ let Copy = {
     ]
 
     action = fun ctx script -> 
-        if script.arguments.Length <> 2 then raise <| Action.ActionUsageError "Copy必须有两个参数。"
+        if script.arguments.Length <> 2 then raise <| Action.ActionUsageError "Copy must be pass one argument."
 
         let targetDir = script.arguments.[0].Trim() |> Action.applyContextToArgument ctx
         let targetDir = targetDir.Trim().TrimEnd('\\', '/') + "/"
         let srcDir = script.scriptFile.DirectoryName.TrimEnd('\\', '/') + "/"
-        let files = 
-            script.arguments.[1] |> Action.applyContextToArgument ctx
-            |> Script.lines
-            |> Seq.map Script.trimLineComment
-            |> Script.trimLines
-            |> Seq.collect (Utils.mapPathToOutputPath srcDir)
 
-        files
-        |> Seq.map (fun (src, fileName) -> 
-            copyFileTask (Some fileName) script src <| targetDir + fileName),
+        Action.blockArgumentTaskPerLine (fun _ script ->
+            Utils.mapPathToOutputPath srcDir
+            >> Seq.map (fun (src, fileName) -> copyFileTask (Some fileName) script src <| targetDir + fileName))
+            ctx script script.arguments.[1],
         ctx
 }
