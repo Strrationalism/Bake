@@ -11,7 +11,7 @@ let main args =
                     "Bake.bake"
                     "BuildScript.bake"
                     "Build.bake"
-                    "Package.bake"
+                    "Publish.bake"
                 ]
                 |> List.find System.IO.File.Exists
             | [|a|] -> [ a; a + ".bake" ] |> List.find System.IO.File.Exists
@@ -64,22 +64,13 @@ let main args =
     | e ->
         printfn "Error:%A" e 
         -1
-    
+
 // Next: 实现Dirty判断
 // Next: 实现以下Action
 //       * Download
-//       * Http Post
-//       * Compile C#
-//       * Compile F#
-//       * Compile VB
 //       * PowerShell
-//       * Run
-//       * Start
-//       * SendEMail
 //       * AESKeygen
 //       * AESEncrypt
-//       * AddToPath
-//       * RemoveFromPath
 //       * If
 //           * Equals $a $b
 //           * Exists File $file

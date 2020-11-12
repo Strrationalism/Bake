@@ -5,6 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Run.fs" />
+    <Compile Include="Start.fs" />
     <Compile Include="Sync.fs" />
     <Compile Include="Atomic.fs" />
     <Compile Include="Set.fs" />

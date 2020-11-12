@@ -2,11 +2,10 @@
 
 open Bake
 
-let printTask ctx script text = {
+let printTask script text = {
     run = fun _ ->
         lock stdout (fun () -> 
             text
-            |> Action.applyContextToArgument ctx 
             |> printfn "%s")
     source = script
     inputFiles = Seq.empty
@@ -29,6 +28,9 @@ let Print = {
     ]
     
     action = fun ctx script -> 
-        seq { printTask ctx script <| Seq.reduce (fun a b -> a + System.Environment.NewLine + b) script.arguments },
+        seq { 
+            Seq.reduce (fun a b -> a + System.Environment.NewLine + b) script.arguments
+            |> Action.applyContextToArgument ctx
+            |> printTask script },
         ctx
 }

@@ -3,8 +3,15 @@ Title "Bake Building System"
 Print "=== Bake Building System ==="
 
 Set $Output "publish"
-Set $BuildDir "Bake/bin/Release/netcoreapp3.1/publish"
 GetDateTime $DateTime
+
+Set $PublishToPlatform "dotnet publish Bake/Bake.fsproj -c Release"
+Run {
+	$PublishToPlatform -p:PublishTrimmed=true -r win10-x64 -p:PublishReadyToRun=true
+	$PublishToPlatform -r osx-x64
+	$PublishToPlatform -p:PublishTrimmed=true -r linux-x64
+
+}
 
 CreateDirectory {
 	$Output
@@ -25,8 +32,16 @@ Action CopyProject projectName {
 }
 
 Parallel {
-	Zip "$Output/Bake-publish-$DateTime.zip" {
-		$BuildDir/*
+	Zip "$Output/Bake-bin-windows-$DateTime.zip" {
+		Bake/bin/Release/netcoreapp3.1/win10-x64/publish/*
+	}
+	
+	Zip "$Output/Bake-bin-osx-x64-$DateTime.zip" {
+		Bake/bin/Release/netcoreapp3.1/osx-x64/publish/*
+	}
+	
+	Zip "$Output/Bake-bin-linux-x64-$DateTime.zip" {
+		Bake/bin/Release/netcoreapp3.1/linux-x64/publish/*
 	}
 	
 	Atomic {

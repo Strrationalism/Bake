@@ -26,6 +26,6 @@ let Title = {
 
     action = fun ctx script -> 
         if script.arguments.Length <> 1 then raise <| Action.ActionUsageError "Title必须有一个参数。"
-        seq { titleTask script script.arguments.Head },
+        seq { titleTask script <| Action.applyContextToArgument ctx script.arguments.Head },
         ctx
 }
