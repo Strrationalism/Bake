@@ -2,7 +2,7 @@ Title "Bake Building System"
 
 Print "=== Bake Building System ==="
 
-Set $Output "publish2"
+Set $Output "publish"
 Set $BuildDir "Bake/bin/Release/netcoreapp3.1/publish"
 GetDateTime $DateTime
 
@@ -46,7 +46,7 @@ Parallel {
 			}
 		}
 		
-		Zip "$Output/Bake-src-$DateTime" {
+		Zip "$Output/Bake-src-$DateTime.zip" {
 			$Output/src-$DateTime/*
 		}
 	}

@@ -8,6 +8,6 @@ let mapPathToOutputPath (srcPath: string) (namePattern: string) =
     let srcPath = srcPath.Trim('\\', '/') + "/"
     let namePattern = namePattern.[1 + namePattern.LastIndexOf '/' ..]
     Directory.EnumerateDirectories (srcPath, namePattern, SearchOption.TopDirectoryOnly)
-    |> Seq.collect (fun x -> Directory.EnumerateFiles (x, "", SearchOption.AllDirectories))
-    |> Seq.append (Directory.EnumerateFiles (srcPath, namePattern, SearchOption.AllDirectories))
+    |> Seq.collect (fun x -> Directory.EnumerateFiles (x, "", SearchOption.TopDirectoryOnly))
+    |> Seq.append (Directory.EnumerateFiles (srcPath, namePattern, SearchOption.TopDirectoryOnly))
     |> Seq.map (fun x -> x, x.[srcPath.Length..])

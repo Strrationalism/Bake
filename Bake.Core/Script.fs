@@ -34,7 +34,7 @@ module Script =
             spaces >>. (many1Satisfy2L isFirst is "command" .>> spaces) <?> "command"
 
         let simpleArgument =    // 简单参数
-            let is c = isDigit c || isLetter c || isAnyOf ['$'; '\\'; '/'; '.'] c
+            let is c = isDigit c || isLetter c || isAnyOf ['$'; '\\'; '/'; '.'; '-'] c
             (many1SatisfyL is "simpleArgument" .>> spaces) <?> "simpleArgument"
 
         let warppedArgument =   // 被双引号包裹起来的参数
@@ -84,7 +84,9 @@ module Script =
         let actions fileInfo = many (many lineEnd >>. spaces >>. singleAction fileInfo .>> many lineEnd) .>> eof <?> "actions"
 
         let script = 
-            script |> lines |> Seq.map (fun x -> trimLineComment(x).Trim()) |> Seq.reduce (fun a b -> a + System.Environment.NewLine + b)
+            script |> lines |> Seq.map (fun x -> trimLineComment(x).Trim()) 
+            |> fun x -> Seq.append x [""]
+            |> Seq.reduce (fun a b -> a + System.Environment.NewLine + b)
 
         match run (actions fileInfo) script with
         | Success(ls, _, _) -> Result.Ok ls

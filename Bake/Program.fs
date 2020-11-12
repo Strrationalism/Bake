@@ -29,7 +29,7 @@ let main args =
             |> Map.ofSeq
 
         //defaultActions |> Seq.iter (printfn "%A")
-        buildScript |> Seq.iter (printfn "%A")
+        //buildScript |> Seq.iter (printfn "%A")
 
         let context = {
             variables = Map.empty
@@ -68,6 +68,7 @@ let main args =
         printfn "Error:%A" e 
         -1
     
+// Next: 将Bake.Parser独立出来
 // Next: 实现Dirty判断
 // Next: 实现以下Action
 //       * Atomic   // 连同Action一起打包构成一个Task
@@ -83,6 +84,8 @@ let main args =
 //       * SendEMail
 //       * AESKeygen
 //       * AESEncrypt
+//       * AddToPath
+//       * RemoveFromPath
 //       * If
 //           * Equals $a $b
 //           * Exists File $file
