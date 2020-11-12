@@ -12,7 +12,7 @@
 ### Module
 .NET DLL文件，里面包含一些Action，供Bake脚本调用。
 
-### Bake脚本
+### Bake Script
 使用Import动作导入Module并调用其Action，用于描述真实的项目构建过程。
 
 ## 基本流程
@@ -21,81 +21,90 @@
 2. 为要构建的项目创建Build.bake，bake脚本使用Import导入需要的Modules后调用Action编写此脚本和子脚本。
 3. 执行构建。
 
-## 基本可用的Actions
-* GetDateTime - 将日期和时间设置到变量中
-* Delete - 删除文件和目录
-* Atomic - 同步执行，如果块中失败，则停止所有后续操作
-* Import - 导入Modules
-* Action - 创建一个动作
-* Include - 包含子Bake脚本文件
-* Set - 用于设置一个环境变量
-* Parallel - 此Action内的子脚本将会并行执行
-* CreateDirectory - 创建文件夹
-* Copy - 复制
-* Zip - 打包
-
 ## 规则
 1. 输入文件全部使用相对路径（相对于脚本文件）
 2. 输出文件全部使用绝对路径（可使用$StartDir获取启动脚本的路径以设置$Output变量）
 
 ## 脚本语言示例
 
-##### Build.bake
+##### Publish.bake
+这个脚本用于构建Bake构建系统本身，并且将会在publish文件夹下整理各个平台的二进制文件、NuGet包和源代码。
 
 ```
-Set $Output "../build"
-Set $Temp "../build-temp"
+Title "Bake Building System"
 
-Print-Split-Line "Compile Modules"
+Print "=== Bake Building System ==="
+
+Set $Output "publish"
+GetDateTime $DateTime
+
+Set $PublishToPlatform "dotnet publish Bake/Bake.fsproj -c Release"
+Run {
+	$PublishToPlatform -p:PublishTrimmed=true -f net472
+	$PublishToPlatform -r osx-x64 -f netcoreapp3.1
+	$PublishToPlatform -p:PublishTrimmed=true -r linux-x64 -f netcoreapp3.1
+
+	dotnet pack Bake.Core/Bake.Core.fsproj -o $Output -c Release
+	dotnet pack Bake.Actions/Bake.Actions.fsproj -o $Output -c Release
+	dotnet pack Bake.Parser/Bake.Parser.fsproj -o $Output -c Release
+}
+
+CreateDirectory {
+	$Output
+	$Output/src	
+	$Output/src/Bake
+	$Output/src/Bake.Core
+	$Output/src/Bake.Actions
+	$Output/src/Bake.Parser
+}
+
+Action CopyProject projectName {
+	Copy "$Output/src/projectName" {
+		projectName/*.fs
+		projectName/*.fsproj
+		projectName/Properties
+	}
+}
 
 Parallel {
-    Compile-Module "$Temp/modules" {
-        First.fsx
-        Second.fsx
-        Third.fsx
-        *-Module.fsx
-    }
+	Zip "$Output/Bake-bin-windows-$DateTime.zip" {
+		Bake/bin/Release/net472/publish/*
+	}
+	
+	Zip "$Output/Bake-bin-osx-x64-$DateTime.zip" {
+		Bake/bin/Release/netcoreapp3.1/osx-x64/publish/*
+	}
+	
+	Zip "$Output/Bake-bin-linux-x64-$DateTime.zip" {
+		Bake/bin/Release/netcoreapp3.1/linux-x64/publish/*
+	}
+	
+	Atomic {
+		Parallel {
+		
+			CopyProject Bake.Core
+			CopyProject Bake.Actions
+			CopyProject Bake.Parser
+			CopyProject Bake
+						
+			
+			Copy "$Output/src" {
+				LICENSE
+				Bake.sln
+				Package.bake
+				README.md
+			}
+		}
+		
+		Zip "$Output/Bake-src-$DateTime.zip" {
+			$Output/src/*
+		}
+	}
 }
 
-
-Import-Module {
-    $Temp/modules/*.dll
-}
-
-Print-Split-Line "Build"
-
-Parallel {
-    Call {
-        Bake.bake
-        CompileScript.bake
-    }
-}
-
-
-Encrypt
-
-PowerShell {
-    rem Some Power Shell Here
-}
-
-Cmd {
-    rem Some CMD Here
-}
 ```
 
-##### Clean.bake
-```
-Delete "../build"
-```
-
-##### Rebuid.bake
-```
-Call {
-    Clean
-    Build
-}
-```
 
 ## 扩展性
 * 可使用.NET DLL导入扩展模块
-* 可现场下载并编译模块
+
