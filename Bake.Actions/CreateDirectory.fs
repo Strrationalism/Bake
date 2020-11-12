@@ -2,12 +2,12 @@
 
 open Bake
 
-let createDirectoryTask (ctx: BakeActionContext) (dir: string) =
+let createDirectoryTask (ctx: BakeActionContext) script (dir: string) =
     Seq.singleton {
         inputFiles = []
         outputFiles = []
         dirty = true
-        source = ctx.script
+        source = script
 
         run = fun ctx ->
             if not <| System.IO.Directory.Exists dir then

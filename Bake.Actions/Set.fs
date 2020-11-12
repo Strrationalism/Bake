@@ -2,6 +2,10 @@
 
 open Bake
 
+let setVariable ctx name value = 
+    { ctx with
+        variables = ctx.variables |> Map.add name value }
+
 [<BakeAction>]
 let Set = {
     help = "设置环境变量"
@@ -15,11 +19,11 @@ let Set = {
         """Set $Var "Hello, world!" """
     ]
     
-    action = fun ctx ->
-        if ctx.script.arguments.Length <> 2 then raise <| Action.ActionUsageError "Set必须有两个参数。"
+    action = fun ctx script ->
+        if script.arguments.Length <> 2 then raise <| Action.ActionUsageError "Set必须有两个参数。"
         else 
-            let variableName = ctx.script.arguments.[0].Trim().TrimStart('$')
-            let value = ctx.script.arguments.[1].Trim() |> Action.applyContextToArgument ctx
-            ctx.variables := !ctx.variables |> Map.add variableName value
-            Seq.empty
+            let name = script.arguments.[0].Trim().TrimStart('$')
+            let value = script.arguments.[1].Trim() |> Action.applyContextToArgument ctx
+            Seq.empty,
+            setVariable ctx name value
 }

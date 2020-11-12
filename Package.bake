@@ -1,40 +1,53 @@
 Title "Bake Building System"
 
-GetDateTime $Now
-Print {     
-=== 这个文件用于对Bake进行打包和发布 ===
---- This file will be used to packing and publishing 'Bake' building system. ---
+Print "=== Bake Building System ==="
 
-Now: $Now
-}
-
-Include "Common.bake"
+Set $Output "publish2"
+Set $BuildDir "Bake/bin/Release/netcoreapp3.1/publish"
+GetDateTime $DateTime
 
 CreateDirectory {
 	$Output
-	$Output/1
-	$Output/2
-	$Output/3
-	$Output/Unzip
-	$Output/Copy
+	$Output/src-$DateTime
+	
+	$Output/src-$DateTime/Bake
+	$Output/src-$DateTime/Bake.Core
+	$Output/src-$DateTime/Bake.Actions
 }
 
 Parallel {
-
-Zip "$Output/Bake.zip" {
-	Bake.Core/*
-	Bake/*.fs
-	Bake.Actions
-}
-
-Copy $Output/Copy {
-	Bake.Core/*
-	Bake/*.fs
-	Bake.Actions
-}
-
-}
-
-Unzip "$Output/Unzip" {
-	$Output/Bake.zip
+	Zip "$Output/Bake-publish-$DateTime.zip" {
+		$BuildDir/*
+	}
+	
+	Sync {
+		Parallel {
+			Copy "$Output/src-$DateTime/Bake" {
+				Bake/*.fs
+				Bake/*.fsproj
+				Bake/Properties
+			}
+			
+			Copy "$Output/src-$DateTime/Bake.Core" {
+				Bake.Core/*.fs
+				Bake.Core/*.fsproj
+			}
+			
+			Copy "$Output/src-$DateTime/Bake.Actions" {
+				Bake.Actions/*.fs
+				Bake.Actions/*.fsproj
+			}
+			
+			Copy "$Output/src-$DateTime" {
+				LICENSE
+				Bake.sln
+				Package.bake
+				README.md
+			}
+		}
+		
+		Zip "$Output/Bake-src-$DateTime" {
+			$Output/src-$DateTime/*
+		}
+	}
 }

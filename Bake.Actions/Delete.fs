@@ -3,7 +3,7 @@
 open Bake
 open System.IO
 
-let deleteFile src fileName = {
+let deleteFileTask src fileName = {
     run = fun _ ->
         File.Delete fileName
         lock stdout (fun () -> printfn "Delete %s" fileName)
@@ -16,7 +16,7 @@ let deleteFile src fileName = {
     source = src
 }
 
-let deleteDirectory src dirName = {
+let deleteDirectoryTask src dirName = {
     run = fun _ ->
         Directory.Delete (dirName, true)
         lock stdout (fun () -> printfn "Delete %s" dirName)
@@ -44,11 +44,11 @@ let Delete = {
         """Delete { Some }     # 删除Some目录"""
     ]
     
-    action = Action.singleBlockArgumentAction (fun ctx path ->
+    action = Action.singleBlockArgumentAction (fun ctx script path ->
         seq {
             if File.Exists path then
-                deleteFile ctx.script path
+                deleteFileTask script path
             if Directory.Exists path then
-                deleteDirectory ctx.script path
+                deleteDirectoryTask script path
         })
 }

@@ -2,6 +2,15 @@
 
 open Bake
 
+let parallelRunner : Runner = fun (actionContext: BakeActionContext) (actions: Script seq) ->
+
+    let runAction (tasks, context) action =
+        let newTasks, context = Action.runAction context action
+        Seq.append tasks newTasks, context
+
+    actions
+    |> Seq.fold runAction (Seq.empty, actionContext)
+
 [<BakeAction>]
 let Parallel = {
     help = "并行执行子代码块内的Task"
@@ -14,30 +23,36 @@ let Parallel = {
         """Parallel { Include Sub.bake }    # Sub.bake的Tasks将会并行执行"""
     ]
     
-    action = fun ctx -> 
-        ctx.script.arguments
+    action = fun ctx script -> 
+        script.arguments
         |> Seq.tryExactlyOne
         |> function
         | None -> raise <| Action.ActionUsageError "Parallel must pass one argument."
         | Some block ->
-            let tasks =
-                Script.parseTasks ctx.script.scriptFile (block.Trim() + "\n")
+            let orgRunner = ctx.runChildBlock
+            let orgTaskContext = ctx.taskContext
+            let tasks, ctx =
+                Script.parseScripts script.scriptFile (block.Trim() + "\n")
                 |> function
                 | Error e -> raise e
-                | Ok x -> Action.runActions ctx x
+                | Ok x -> parallelRunner (Sync.setChildBlockRunner ctx parallelRunner) x
+
+            let results =
+                tasks
                 |> Seq.toArray
-            seq {
-                {
-                    run = fun ctx ->
-                        tasks 
-                        |> Array.Parallel.iter (Task.run ctx >> ignore)
-                
-                    inputFiles = tasks |> Seq.collect (fun x -> x.inputFiles)
-                    outputFiles = tasks |> Seq.collect (fun x -> x.outputFiles)
-                
-                    dirty = false
-                
-                    source = ctx.script
-                }
-            }
+                |> Array.Parallel.map (fun x -> Task.run { ctx.taskContext with updatedOutputFile = Seq.empty } x)
+            
+            let nextTaskContext = 
+                results
+                |> Array.fold (fun (result: Result<TaskContext, exn>) x ->
+                    result
+                    |> Result.bind (fun result ->
+                        x |> Result.map (fun x -> Task.mergeTaskContext result x)))
+                    (Ok orgTaskContext)
+                |> function
+                | Error e -> raise e
+                | Ok x -> x
+
+            Seq.empty,
+            { Sync.setChildBlockRunner ctx orgRunner with taskContext = nextTaskContext }
 }

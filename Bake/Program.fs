@@ -21,6 +21,7 @@ let main args =
             |> function
             | Ok x -> x
             | Error e -> raise e
+            |> Seq.ofList
 
         let defaultActions = 
             System.Reflection.Assembly.Load("Bake.Actions")
@@ -28,27 +29,25 @@ let main args =
             |> Map.ofSeq
 
         //defaultActions |> Seq.iter (printfn "%A")
-        //buildScript |> Seq.iter (printfn "%A")
+        buildScript |> Seq.iter (printfn "%A")
 
-        let defaultActionContext = {
-            script = buildScript |> List.head
-            variables = ref Map.empty
-            actions = ref defaultActions
-        }
+        let context = {
+            variables = Map.empty
+            actions = defaultActions
+            taskContext = {
+                updatedOutputFile = []
+            }
 
-        let defaultTaskContext = {
-            updatedOutputFile = []
-            errorMessages = ref []
+            runChildBlock = Bake.Actions.Sync.syncBlockRunner
         }
     
     
         let timer = System.Diagnostics.Stopwatch ()
         timer.Start ()
 
-        buildScript
-        |> Action.runActions defaultActionContext
-        |> Seq.fold (fun (ctx, errno) t -> Task.run ctx t) (defaultTaskContext, Ok ())
+        context.runChildBlock context buildScript
         |> ignore
+
 
         timer.Stop ()
 
@@ -69,9 +68,9 @@ let main args =
         printfn "Error:%A" e 
         -1
     
-
 // Next: 实现Dirty判断
 // Next: 实现以下Action
+//       * Atomic   // 连同Action一起打包构成一个Task
 //       * Action
 //       * Download
 //       * Http Post

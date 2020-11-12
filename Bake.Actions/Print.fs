@@ -2,6 +2,18 @@
 
 open Bake
 
+let printTask ctx script text = {
+    run = fun _ ->
+        lock stdout (fun () -> 
+            text
+            |> Action.applyContextToArgument ctx 
+            |> printfn "%s")
+    source = script
+    inputFiles = Seq.empty
+    outputFiles = Seq.empty
+    dirty = true
+}
+
 [<BakeAction>]
 let Print = {
     help = "在屏幕上打印内容"
@@ -16,14 +28,7 @@ let Print = {
         """Print { Hello, world! }"""
     ]
     
-    action = fun ctx -> seq { {
-        run = fun _ ->
-            lock stdout (fun () -> 
-                ctx.script.arguments
-                |> List.iter (Action.applyContextToArgument ctx >> printfn "%s"))
-        source = ctx.script
-        inputFiles = Seq.empty
-        outputFiles = Seq.empty
-        dirty = true
-    } }
+    action = fun ctx script -> 
+        seq { printTask ctx script <| Seq.reduce (fun a b -> a + System.Environment.NewLine + b) script.arguments },
+        ctx
 }

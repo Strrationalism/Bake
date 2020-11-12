@@ -5,41 +5,46 @@ open Bake
 open System.IO
 open System.IO.Compression
 
+let unzipTask echo script targetDir zipFile =
+    let zip = ZipFile.OpenRead (zipFile)
+    {
+        run = fun _ -> 
+            if echo then lock stdout (fun () -> printfn "Decompressing %s to %s..." zipFile targetDir)
+            zip.ExtractToDirectory (targetDir)
+            zip.Dispose ()
+        inputFiles = seq { FileInfo zipFile }
+        outputFiles = zip.Entries |> Seq.map (fun x -> targetDir + x.FullName)
+        dirty = false
+        source = script
+    }
+
 [<BakeAction>]
 let Unzip = {
     help = "解压Zip压缩文件"
 
     usage = [
-        """Zip <目标文件> { 待解压的zip文件列表 }"""
+        """Unzip <目标文件夹> { 待解压的zip文件列表 }"""
     ]
 
     example = [
-        """Zip $Output { *.zip } """
+        """Unip $Output { *.zip } """
     ]
 
-    action = fun ctx -> 
-        if ctx.script.arguments.Length <> 2 then raise <| Action.ActionUsageError "Unzip必须有两个参数。"
+    action = fun ctx script -> 
+        if script.arguments.Length <> 2 then raise <| Action.ActionUsageError "Unzip必须有两个参数。"
 
-        let targetDir = ctx.script.arguments.[0].Trim() |> Action.applyContextToArgument ctx
+        let targetDir = script.arguments.[0].Trim() |> Action.applyContextToArgument ctx
         let targetDir = targetDir.TrimEnd('\\', '/') + "/"
         let zipFiles = 
-            ctx.script.arguments.[1] |> Action.applyContextToArgument ctx
+            script.arguments.[1] |> Action.applyContextToArgument ctx
             |> Script.lines
             |> Seq.map Script.trimLineComment
             |> Script.trimLines
+        
 
         zipFiles
-        |> Seq.map (fun zipFile -> 
-            {
-                run = fun _ -> 
-                    lock stdout (fun () -> printfn "Decompressing %s to %s..." zipFile targetDir)
-                    use zip = ZipFile.OpenRead (zipFile)
-                    zip.ExtractToDirectory (targetDir)
-                inputFiles = seq { FileInfo zipFile }
-                outputFiles = Seq.empty
-                dirty = true
-                source = ctx.script
-            })
+        |> Seq.map (unzipTask true script targetDir),
+        ctx
 }
 
 

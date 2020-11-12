@@ -17,17 +17,14 @@ let Include = {
         """Include {\n\tFirst.bake\n\tSecond.bake\n\tThird.bake\n\t...\n}"""
     ]
     
-    action =
-        Action.singleBlockArgumentAction (fun ctx script ->
-            let files =
-                Directory.EnumerateFiles (ctx.script.scriptFile.DirectoryName, script, SearchOption.AllDirectories)
-            if (files |> Seq.length) = 0 then 
-                raise <| System.IO.FileNotFoundException (script + " not found.")
-            else
-                files
-                |> Seq.collect (fun x ->
-                    Script.parseFromFile (System.IO.FileInfo x)
-                    |> function
-                    | Error e -> raise e
-                    | Ok x -> Action.runActions ctx x))
+    action = fun ctx script ->
+        script.arguments
+        |> Seq.collect (Action.applyContextToArgument ctx >> Script.lines)
+        |> Seq.map Script.trimLineComment
+        |> Script.trimLines
+        |> Seq.map (FileInfo >> Script.parseFromFile)
+        |> Seq.collect (function
+        | Error e -> raise e
+        | Ok x -> x)
+        |> ctx.runChildBlock ctx
 }

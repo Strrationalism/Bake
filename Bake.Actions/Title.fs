@@ -2,6 +2,16 @@
 
 open Bake
 
+let titleTask script title = {
+    run = fun _ ->
+        System.Console.Title <- title
+
+    inputFiles = Seq.empty
+    source = script
+    outputFiles = Seq.empty
+    dirty = true
+}
+
 [<BakeAction>]
 let Title = {
     help = "设置控制台窗口标题"
@@ -14,15 +24,8 @@ let Title = {
         """Title "Hello, world!" """
     ]
 
-    action = fun ctx -> 
-        if ctx.script.arguments.Length <> 1 then raise <| Action.ActionUsageError "Title必须有一个参数。"
-        seq { {
-            run = fun _ ->
-                System.Console.Title <- ctx.script.arguments.Head
-
-            inputFiles = Seq.empty
-            source = ctx.script
-            outputFiles = Seq.empty
-            dirty = true
-        }}
+    action = fun ctx script -> 
+        if script.arguments.Length <> 1 then raise <| Action.ActionUsageError "Title必须有一个参数。"
+        seq { titleTask script script.arguments.Head },
+        ctx
 }
