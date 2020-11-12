@@ -5,6 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Sync.fs" />
+    <Compile Include="Atomic.fs" />
     <Compile Include="Set.fs" />
     <Compile Include="Import.fs" />
     <Compile Include="Copy.fs" />
@@ -13,7 +15,6 @@
     <Compile Include="Title.fs" />
     <Compile Include="Print.fs" />
     <Compile Include="Delete.fs" />
-    <Compile Include="Sync.fs" />
     <Compile Include="Parallel.fs" />
     <Compile Include="Include.fs" />
     <Compile Include="GetDateTime.fs" />

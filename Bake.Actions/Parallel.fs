@@ -30,7 +30,6 @@ let Parallel = {
         | None -> raise <| Action.ActionUsageError "Parallel must pass one argument."
         | Some block ->
             let orgRunner = ctx.runChildBlock
-            let orgTaskContext = ctx.taskContext
             let tasks, ctx =
                 Script.parseScripts script.scriptFile (block.Trim() + "\n")
                 |> function
@@ -40,19 +39,18 @@ let Parallel = {
             let results =
                 tasks
                 |> Seq.toArray
-                |> Array.Parallel.map (fun x -> Task.run { ctx.taskContext with updatedOutputFile = Seq.empty } x)
+                |> Array.Parallel.map (fun x -> Task.run x)
             
             let nextTaskContext = 
                 results
-                |> Array.fold (fun (result: Result<TaskContext, exn>) x ->
+                |> Array.fold (fun (result: Result<unit, exn>) x ->
                     result
-                    |> Result.bind (fun result ->
-                        x |> Result.map (fun x -> Task.mergeTaskContext result x)))
-                    (Ok orgTaskContext)
+                    |> Result.bind (fun result -> x))
+                    (Ok ())
                 |> function
                 | Error e -> raise e
                 | Ok x -> x
 
             Seq.empty,
-            { Sync.setChildBlockRunner ctx orgRunner with taskContext = nextTaskContext }
+            Sync.setChildBlockRunner ctx orgRunner
 }

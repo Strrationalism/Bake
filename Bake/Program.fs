@@ -34,9 +34,6 @@ let main args =
         let context = {
             variables = Map.empty
             actions = defaultActions
-            taskContext = {
-                updatedOutputFile = []
-            }
 
             runChildBlock = Bake.Actions.Sync.syncBlockRunner
         }

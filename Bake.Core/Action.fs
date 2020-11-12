@@ -20,7 +20,6 @@ and BakeActionContext = {
     variables : Map<string, string>
     actions : Map<string, BakeAction>
     runChildBlock : Runner
-    taskContext : TaskContext
 }
 
 module Action =

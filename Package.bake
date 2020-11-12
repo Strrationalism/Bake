@@ -20,7 +20,7 @@ Parallel {
 		$BuildDir/*
 	}
 	
-	Sync {
+	Atomic {
 		Parallel {
 			Copy "$Output/src-$DateTime/Bake" {
 				Bake/*.fs

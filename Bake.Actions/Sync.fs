@@ -4,24 +4,23 @@ open Bake
 
 let syncBlockRunner : Runner = fun (actionContext: BakeActionContext) (actions: Script seq) ->
 
-    let runTasks taskContext task =
-        taskContext
-        |> Result.bind (fun taskContext -> Task.run taskContext task)
+    let runTasks result task =
+        result |> Result.bind (fun () -> Task.run task)
 
     let finalContext =
         actions
         |> Seq.fold (fun actionCtx script ->
             let tasks, actionCtx = Action.runAction actionCtx script
-            let taskResult = tasks |> Seq.fold runTasks (Ok actionCtx.taskContext)
+            let taskResult = tasks |> Seq.fold runTasks (Ok ())
             match taskResult with
-            | Ok taskContext -> { actionCtx with taskContext = taskContext }
+            | Ok () -> actionCtx
             | Error e -> raise e) 
             actionContext
 
     Seq.empty, finalContext
 
 let setChildBlockRunner actionContext runner = { actionContext with runChildBlock = runner }
-    
+
 
 [<BakeAction>]
 let Sync = {
