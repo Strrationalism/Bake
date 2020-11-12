@@ -11,6 +11,9 @@ Run {
 	$PublishToPlatform -r osx-x64
 	$PublishToPlatform -p:PublishTrimmed=true -r linux-x64
 
+	dotnet pack Bake.Core/Bake.Core.fsproj -o $Output
+	dotnet pack Bake.Actions/Bake.Actions.fsproj -o $Output
+	dotnet pack Bake.Parser/Bake.Parser.fsproj -o $Output
 }
 
 CreateDirectory {
