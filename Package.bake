@@ -13,6 +13,7 @@ CreateDirectory {
 	$Output/src-$DateTime/Bake
 	$Output/src-$DateTime/Bake.Core
 	$Output/src-$DateTime/Bake.Actions
+	$Output/src-$DateTime/Bake.Parser
 }
 
 Parallel {
@@ -37,6 +38,12 @@ Parallel {
 				Bake.Actions/*.fs
 				Bake.Actions/*.fsproj
 			}
+			
+			Copy "$Output/src-$DateTime/Bake.Parser" {
+				Bake.Parser/*.fs
+				Bake.Parser/*.fsproj
+			}
+
 			
 			Copy "$Output/src-$DateTime" {
 				LICENSE

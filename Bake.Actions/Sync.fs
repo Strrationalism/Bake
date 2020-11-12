@@ -41,7 +41,7 @@ let Sync = {
         |> function
         | None -> raise <| Action.ActionUsageError "Atomic must pass one argument."
         | Some block ->
-            Script.parseScripts script.scriptFile (block.Trim() + "\n")
+            Parser.parseScripts script.scriptFile (block.Trim() + "\n")
             |> function
             | Error e -> raise e
             | Ok x -> 

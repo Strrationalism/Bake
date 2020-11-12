@@ -31,7 +31,7 @@ let Parallel = {
         | Some block ->
             let orgRunner = ctx.runChildBlock
             let tasks, ctx =
-                Script.parseScripts script.scriptFile (block.Trim() + "\n")
+                Parser.parseScripts script.scriptFile (block.Trim() + "\n")
                 |> function
                 | Error e -> raise e
                 | Ok x -> parallelRunner (Sync.setChildBlockRunner ctx parallelRunner) x

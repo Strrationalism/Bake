@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Bake.Core\Bake.Core.fsproj" />
+    <ProjectReference Include="..\Bake.Parser\Bake.Parser.fsproj" />
   </ItemGroup>
 
 </Project>

@@ -17,7 +17,7 @@ let main args =
             | [|a|] -> [ a; a + ".bake" ] |> List.find System.IO.File.Exists
             | _ -> failwithf "Not support"
             |> System.IO.FileInfo
-            |> Script.parseFromFile
+            |> Parser.parseFromFile
             |> function
             | Ok x -> x
             | Error e -> raise e
@@ -52,7 +52,7 @@ let main args =
 
         0
     with 
-    | Script.ParsingError e ->
+    | Parser.ParsingError e ->
         printfn "Parsing Error:%s" e
         -1
     | Action.ActionNotFound e ->
@@ -65,10 +65,8 @@ let main args =
         printfn "Error:%A" e 
         -1
     
-// Next: 将Bake.Parser独立出来
 // Next: 实现Dirty判断
 // Next: 实现以下Action
-//       * Atomic   // 连同Action一起打包构成一个Task
 //       * Action
 //       * Download
 //       * Http Post
