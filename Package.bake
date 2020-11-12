@@ -16,6 +16,14 @@ CreateDirectory {
 	$Output/src-$DateTime/Bake.Parser
 }
 
+Action CopyProject projectName {
+	Copy "$Output/src-$DateTime/projectName" {
+		projectName/*.fs
+		projectName/*.fsproj
+		projectName/Properties
+	}
+}
+
 Parallel {
 	Zip "$Output/Bake-publish-$DateTime.zip" {
 		$BuildDir/*
@@ -23,27 +31,12 @@ Parallel {
 	
 	Atomic {
 		Parallel {
-			Copy "$Output/src-$DateTime/Bake" {
-				Bake/*.fs
-				Bake/*.fsproj
-				Bake/Properties
-			}
-			
-			Copy "$Output/src-$DateTime/Bake.Core" {
-				Bake.Core/*.fs
-				Bake.Core/*.fsproj
-			}
-			
-			Copy "$Output/src-$DateTime/Bake.Actions" {
-				Bake.Actions/*.fs
-				Bake.Actions/*.fsproj
-			}
-			
-			Copy "$Output/src-$DateTime/Bake.Parser" {
-				Bake.Parser/*.fs
-				Bake.Parser/*.fsproj
-			}
-
+		
+			CopyProject Bake.Core
+			CopyProject Bake.Actions
+			CopyProject Bake.Parser
+			CopyProject Bake
+						
 			
 			Copy "$Output/src-$DateTime" {
 				LICENSE

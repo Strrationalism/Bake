@@ -9,6 +9,7 @@
     <Compile Include="Atomic.fs" />
     <Compile Include="Set.fs" />
     <Compile Include="Import.fs" />
+    <Compile Include="Action.fs" />
     <Compile Include="Copy.fs" />
     <Compile Include="Unzip.fs" />
     <Compile Include="Zip.fs" />
