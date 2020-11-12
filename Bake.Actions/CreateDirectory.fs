@@ -13,7 +13,6 @@ let createDirectoryTask (ctx: BakeActionContext) script (dir: string) =
             if not <| System.IO.Directory.Exists dir then
                 System.IO.Directory.CreateDirectory dir
                 |> ignore
-                lock stdout (fun () -> printfn "CreateDirectory %s" dir)
     }
 
 [<BakeAction>]

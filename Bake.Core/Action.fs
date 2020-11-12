@@ -23,7 +23,6 @@ and BakeActionContext = {
 }
 
 module Action =
-    exception MethodIsNotAnException of string
     let getActionsFromAssembly (assembly: Assembly) =
         let toBakeAction (action: PropertyInfo) = 
 
@@ -68,7 +67,10 @@ module Action =
         , ctx
 
     exception ActionNotFound of string
+    exception ActionException of Script * BakeActionContext * exn
     let runAction ctx script =
         match ctx.actions |> Map.tryFind script.command with
         | None -> raise <| ActionNotFound script.command
-        | Some action -> action.action ctx script
+        | Some action -> 
+            try action.action ctx script
+            with e -> raise <| ActionException (script, ctx, e)

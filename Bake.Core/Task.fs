@@ -28,7 +28,7 @@ module Task =
                 else false
         with _ -> true
 
-
+    exception TaskException of Task * exn
     let run (task: Task) : Result<unit, exn> = 
         if isDirty task then 
             try
@@ -43,7 +43,7 @@ module Task =
                 |> Seq.iter (fun x -> 
                     try System.IO.File.Delete x
                     with _ -> ())
-                Error e
+                TaskException (task, e) |> Error
             
         else Ok ()
 

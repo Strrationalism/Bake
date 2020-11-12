@@ -1,9 +1,18 @@
 ﻿
+open System
 open Bake
+
+let processError fmt =
+    Console.ForegroundColor <- ConsoleColor.Red
+    Console.Beep ()
+    Printf.kprintf (fun _ -> Console.ResetColor (); -1) fmt
 
 [<EntryPoint>]
 let main args =
     try
+        try
+            Console.SetWindowSize(90,40)
+        with _ -> ()
         let buildScriptFile =
             match args with
             | [||] -> 
@@ -58,24 +67,12 @@ let main args =
 
         0
     with 
-    | Parser.ParsingError e ->
-        printfn "Parsing Error:%s" e
-        -1
-    | Action.ActionNotFound e ->
-        printfn "Action Not Found:%s" e
-        -1
-    | Action.ActionUsageError e ->
-        printfn "Action Usage Error:%s" e
-        -1
-    | e ->
-        printfn "Error:%A" e 
-        -1
-
-// Next: 实现以下Action
-//       * If
-//           * Equals $a $b
-//           * Exists File $file
-//           * Exists Directory $dir
-//           * Not $Expression
-//           * $SrcFiles Newer $DstFiles
+    | Parser.ParsingError e -> processError "Parsing Error:%s" e
+    | Action.ActionNotFound e -> processError "Action Not Found:%s" e
+    | Action.ActionUsageError e -> processError "Action Usage Error:%s" e
+    | Action.ActionException (script, ctx, e) ->
+        processError "Action Error:%s\n\n%A\n\n%A\n\n%A" e.Message e script ctx
+    | Task.TaskException (task, e) ->
+        processError "Task Error:%s\n\n%A\n\n%A" e.Message e task
+    | e -> processError "Error:%A" e 
 
