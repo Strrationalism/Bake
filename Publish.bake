@@ -18,16 +18,15 @@ Run {
 
 CreateDirectory {
 	$Output
-	$Output/src-$DateTime
-	
-	$Output/src-$DateTime/Bake
-	$Output/src-$DateTime/Bake.Core
-	$Output/src-$DateTime/Bake.Actions
-	$Output/src-$DateTime/Bake.Parser
+	$Output/src	
+	$Output/src/Bake
+	$Output/src/Bake.Core
+	$Output/src/Bake.Actions
+	$Output/src/Bake.Parser
 }
 
 Action CopyProject projectName {
-	Copy "$Output/src-$DateTime/projectName" {
+	Copy "$Output/src/projectName" {
 		projectName/*.fs
 		projectName/*.fsproj
 		projectName/Properties
@@ -56,7 +55,7 @@ Parallel {
 			CopyProject Bake
 						
 			
-			Copy "$Output/src-$DateTime" {
+			Copy "$Output/src" {
 				LICENSE
 				Bake.sln
 				Package.bake
@@ -65,7 +64,7 @@ Parallel {
 		}
 		
 		Zip "$Output/Bake-src-$DateTime.zip" {
-			$Output/src-$DateTime/*
+			$Output/src/*
 		}
 	}
 }

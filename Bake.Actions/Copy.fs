@@ -10,7 +10,8 @@ let copyFileTask (echo: string option) script srcFile dstFile = {
         | None -> ()
         let dstDir = FileInfo(dstFile).Directory
         if not dstDir.Exists then dstDir.Create ()
-        File.Copy (srcFile, dstFile)
+        let bytes = File.ReadAllBytes srcFile
+        File.WriteAllBytes (dstFile, bytes)
             
     inputFiles = seq { FileInfo (srcFile) }
     source = script

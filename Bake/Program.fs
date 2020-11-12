@@ -65,7 +65,6 @@ let main args =
         printfn "Error:%A" e 
         -1
 
-// Next: 实现Dirty判断
 // Next: 实现以下Action
 //       * If
 //           * Equals $a $b
