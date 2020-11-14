@@ -49,6 +49,7 @@ let main args =
                 |> Map.add "StartDir" buildScriptFile.Directory.FullName
                 |> Map.add "CurrentDir" System.Environment.CurrentDirectory
             actions = defaultActions
+            loadedModules = Set.empty
 
             runChildBlock = Bake.Actions.Sync.syncBlockRunner
         }

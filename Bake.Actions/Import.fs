@@ -11,10 +11,16 @@ let importActions ctx (actions: (string * BakeAction) seq) =
     actions
     |> Seq.fold (fun ctx (name, action) -> importAction ctx name action) ctx
 
-let importDlls ctx dlls =
-    dlls
-    |> Seq.collect Action.getActionsFromDLL
-    |> importActions ctx
+let importDll ctx (dll: string) =
+    let moduleName = dll.Trim().ToLower()
+    if ctx.loadedModules |> Seq.contains moduleName then ctx
+    else
+        let actions = Action.getActionsFromDLL dll
+        { importActions ctx actions with
+            loadedModules = Set.add moduleName ctx.loadedModules }
+    
+
+let importDlls ctx dlls = Seq.fold importDll ctx dlls
 
 [<BakeAction>]
 let Import = {

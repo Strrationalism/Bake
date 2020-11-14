@@ -19,6 +19,7 @@ and Runner = BakeActionContext -> Script seq -> Task seq * BakeActionContext
 and BakeActionContext = {
     variables : Map<string, string>
     actions : Map<string, BakeAction>
+    loadedModules : string Set
     runChildBlock : Runner
 }
 
