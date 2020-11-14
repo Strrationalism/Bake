@@ -42,7 +42,7 @@ module Action =
             t.GetProperties ()
             |> Seq.choose toBakeAction)
 
-    let getActionsFromDLL = Assembly.LoadFile >> getActionsFromAssembly
+    let getActionsFromDLL = Assembly.LoadFrom >> getActionsFromAssembly
 
     let applyContextToArgument actionContext (text: string) =
         actionContext.variables

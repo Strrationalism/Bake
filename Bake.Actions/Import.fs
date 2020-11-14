@@ -45,13 +45,17 @@ let Import = {
             >> Seq.map Script.trimLineComment)
         |> Script.trimLines
         |> Seq.fold (fun ctx moduleName ->
+            let moduleName = moduleName.Replace('\\', '/').Trim()
+            let dir = moduleName.[..moduleName.LastIndexOf '/'].Trim('/')
+            let moduleName = moduleName.[1 + moduleName.LastIndexOf '/' ..]
             let files =
                 seq {
-                    script.scriptFile.DirectoryName + "/"
-                    System.Environment.CurrentDirectory + "/"
-                    System.Reflection.Assembly.GetExecutingAssembly().Location + "/"
+                    script.scriptFile.DirectoryName + "/" + dir
+                    System.Environment.CurrentDirectory + "/" + dir
+                    System.Reflection.Assembly.GetExecutingAssembly().Location + "/" + dir
                 }
-                |> Seq.collect (fun x -> Directory.EnumerateFiles(x, moduleName + ".dll", SearchOption.AllDirectories))
+                |> Seq.filter System.IO.Directory.Exists
+                |> Seq.collect (fun x -> Directory.EnumerateFiles(x, moduleName, SearchOption.AllDirectories))
 
             if (Seq.length files) = 0 then raise <| FileNotFoundException (moduleName + "is not found.")
 
