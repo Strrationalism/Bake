@@ -11,3 +11,8 @@ let mapPathToOutputPath (srcPath: string) (namePattern: string) =
     |> Seq.collect (fun x -> Directory.EnumerateFiles (x, "", SearchOption.TopDirectoryOnly))
     |> Seq.append (Directory.EnumerateFiles (srcPath, namePattern, SearchOption.TopDirectoryOnly))
     |> Seq.map (fun x -> x, x.[srcPath.Length..])
+
+let stringReducing f (s: string seq) =
+    match s with
+    | x when Seq.isEmpty x -> ""
+    | x -> x |> Seq.reduce f

@@ -21,7 +21,7 @@ let Action = {
 
         let action = {
             help = actionName
-            usage = [ actionName + " " + List.reduce (fun a b -> a + " " + b) parameters ]
+            usage = [ actionName + " " + Utils.stringReducing (fun a b -> a + " " + b) parameters ]
             example = []
             action = fun ctx script ->
                 script.arguments
