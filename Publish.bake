@@ -3,13 +3,14 @@ Title "Bake Building System"
 Print "=== Bake Building System ==="
 
 Set $Output "publish"
+Set $Target "net5.0"
 GetDateTime $DateTime
 
 Set $PublishToPlatform "dotnet publish Bake/Bake.fsproj -c Release"
 Run {
-	$PublishToPlatform -p:PublishTrimmed=true -f net472
-	$PublishToPlatform -r osx-x64 -f netcoreapp3.1
-	$PublishToPlatform -p:PublishTrimmed=true -r linux-x64 -f netcoreapp3.1
+	$PublishToPlatform -p:PublishTrimmed=true -r win-x64 -p:PublishReadyToRun=true
+	$PublishToPlatform -r osx-x64
+	$PublishToPlatform -r linux-x64
 
 	dotnet pack Bake.Core/Bake.Core.fsproj -o $Output -c Release
 	dotnet pack Bake.Actions/Bake.Actions.fsproj -o $Output -c Release
@@ -35,15 +36,15 @@ Action CopyProject projectName {
 
 Parallel {
 	Zip "$Output/Bake-bin-windows-$DateTime.zip" {
-		Bake/bin/Release/net472/publish/*
+		Bake/bin/Release/$Target/win-x64/publish/*
 	}
 	
 	Zip "$Output/Bake-bin-osx-x64-$DateTime.zip" {
-		Bake/bin/Release/netcoreapp3.1/osx-x64/publish/*
+		Bake/bin/Release/$Target/osx-x64/publish/*
 	}
 	
 	Zip "$Output/Bake-bin-linux-x64-$DateTime.zip" {
-		Bake/bin/Release/netcoreapp3.1/linux-x64/publish/*
+		Bake/bin/Release/$Target/linux-x64/publish/*
 	}
 	
 	Atomic {
