@@ -8,9 +8,9 @@ GetDateTime $DateTime
 
 Set $PublishToPlatform "dotnet publish Bake/Bake.fsproj -c Release"
 Run {
-	$PublishToPlatform -p:PublishTrimmed=true -r win-x64 -p:PublishReadyToRun=true
-	$PublishToPlatform -r osx-x64
-	$PublishToPlatform -r linux-x64
+	$PublishToPlatform -p:PublishTrimmed=true -r win-x64 -p:PublishReadyToRun=true -f $Target-windows
+	$PublishToPlatform -r osx-x64 -f $Target
+	$PublishToPlatform -r linux-x64 -f $Target
 
 	dotnet pack Bake.Core/Bake.Core.fsproj -o $Output -c Release
 	dotnet pack Bake.Actions/Bake.Actions.fsproj -o $Output -c Release
@@ -36,7 +36,7 @@ Action CopyProject projectName {
 
 Parallel {
 	Zip "$Output/Bake-bin-windows-$DateTime.zip" {
-		Bake/bin/Release/$Target/win-x64/publish/*
+		Bake/bin/Release/$Target-windows/win-x64/publish/*
 	}
 	
 	Zip "$Output/Bake-bin-osx-x64-$DateTime.zip" {
