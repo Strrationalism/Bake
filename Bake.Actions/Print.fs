@@ -30,7 +30,7 @@ let Print = {
     action = fun ctx script -> 
         seq { 
             Seq.reduce (fun a b -> a + System.Environment.NewLine + b) script.arguments
-            |> Action.applyContextToArgument ctx
+            |> Utils.applyContextToArgument ctx
             |> printTask script },
         ctx
 }

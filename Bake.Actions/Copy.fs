@@ -1,6 +1,7 @@
 ﻿module Bake.Actions.Copy
 
 open Bake
+open Utils
 open System.IO
 
 let copyFileTask (echo: string option) script srcFile dstFile = {
@@ -32,13 +33,13 @@ let Copy = {
     ]
 
     action = fun ctx script -> 
-        if script.arguments.Length <> 2 then raise <| Action.ActionUsageError "Copy must be pass one argument."
+        verifyArgumentCount script 2
 
-        let targetDir = script.arguments.[0].Trim() |> Action.applyContextToArgument ctx
-        let targetDir = targetDir.Trim().TrimEnd('\\', '/') + "/"
-        let srcDir = script.scriptFile.DirectoryName.TrimEnd('\\', '/') + "/"
+        let targetDir = script.arguments.[0].Trim() |> applyContextToArgument ctx
+        let targetDir = normalizeDirPath targetDir
+        let srcDir = script.scriptFile.DirectoryName |> normalizeDirPath
 
-        Action.blockArgumentTaskPerLine (fun _ script ->
+        blockArgumentTaskPerLine (fun _ script ->
             Utils.mapPathToOutputPath srcDir
             >> Seq.map (fun (src, fileName) -> copyFileTask (Some fileName) script src <| targetDir + fileName))
             ctx script script.arguments.[1],

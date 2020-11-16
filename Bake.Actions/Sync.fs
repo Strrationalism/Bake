@@ -1,6 +1,7 @@
 ﻿module Bake.Actions.Sync
 
 open Bake
+open Utils
 
 let syncBlockRunner : Runner = fun (actionContext: BakeActionContext) (actions: Script seq) ->
 
@@ -10,7 +11,7 @@ let syncBlockRunner : Runner = fun (actionContext: BakeActionContext) (actions: 
     let finalContext =
         actions
         |> Seq.fold (fun actionCtx script ->
-            let tasks, actionCtx = Action.runAction actionCtx script
+            let tasks, actionCtx = Action.run actionCtx script
             let taskResult = tasks |> Seq.fold runTasks (Ok ())
             match taskResult with
             | Ok () -> actionCtx
@@ -35,17 +36,14 @@ let Sync = {
     ]
     
     action = fun ctx script -> 
+        verifyArgumentCount script 1
         let orgRunner = ctx.runChildBlock
-        script.arguments
-        |> Seq.tryExactlyOne
+        
+        Parser.parseScripts script.scriptFile (script.arguments.Head.Trim() + "\n")
         |> function
-        | None -> raise <| Action.ActionUsageError "Atomic must pass one argument."
-        | Some block ->
-            Parser.parseScripts script.scriptFile (block.Trim() + "\n")
-            |> function
-            | Error e -> raise e
-            | Ok x -> 
-                let tasks, ctx =
-                    syncBlockRunner (setChildBlockRunner ctx syncBlockRunner) x
-                tasks, setChildBlockRunner ctx orgRunner
+        | Error e -> raise e
+        | Ok x -> 
+            let tasks, ctx =
+                syncBlockRunner (setChildBlockRunner ctx syncBlockRunner) x
+            tasks, setChildBlockRunner ctx orgRunner
 }

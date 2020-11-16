@@ -1,6 +1,7 @@
 ﻿module Bake.Actions.Set
 
 open Bake
+open Utils
 
 let setVariable ctx name value = 
     { ctx with
@@ -20,10 +21,9 @@ let Set = {
     ]
     
     action = fun ctx script ->
-        if script.arguments.Length <> 2 then raise <| Action.ActionUsageError "Set must be pass one argument."
-        else 
-            let name = script.arguments.[0].Trim().TrimStart('$')
-            let value = script.arguments.[1].Trim() |> Action.applyContextToArgument ctx
-            Seq.empty,
-            setVariable ctx name value
+        verifyArgumentCount script 2
+        let name = script.arguments.[0].Trim().TrimStart('$')
+        let value = script.arguments.[1].Trim() |> applyContextToArgument ctx
+        Seq.empty,
+        setVariable ctx name value
 }

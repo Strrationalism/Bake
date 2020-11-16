@@ -1,6 +1,7 @@
 ﻿module Bake.Actions.Atomic
 
 open Bake
+open Utils
 open Sync
 
 [<BakeAction>]
@@ -16,21 +17,17 @@ let Atomic = {
     ]
     
     action = fun ctx script -> 
+        verifyArgumentCount script 1
         seq{ {
             inputFiles = Seq.empty
             outputFiles = Seq.empty
             dirty = true
             source = script
             run = fun _ ->
-                script.arguments
-                |> Seq.tryExactlyOne
+                Parser.parseScripts script.scriptFile (script.arguments.Head.Trim() + "\n")
                 |> function
-                | None -> raise <| Action.ActionUsageError "Atomic must pass one argument."
-                | Some block ->
-                    Parser.parseScripts script.scriptFile (block.Trim() + "\n")
-                    |> function
-                    | Error e -> raise e
-                    | Ok x -> syncBlockRunner (setChildBlockRunner ctx syncBlockRunner) x |> ignore
+                | Error e -> raise e
+                | Ok x -> syncBlockRunner (setChildBlockRunner ctx syncBlockRunner) x |> ignore
         } },
         ctx
 }

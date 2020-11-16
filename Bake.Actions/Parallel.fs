@@ -5,7 +5,7 @@ open Bake
 let parallelRunner : Runner = fun (actionContext: BakeActionContext) (actions: Script seq) ->
 
     let runAction (tasks, context) action =
-        let newTasks, context = Action.runAction context action
+        let newTasks, context = Action.run context action
         Seq.append tasks newTasks, context
 
     actions

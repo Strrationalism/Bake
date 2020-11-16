@@ -19,7 +19,7 @@ let Include = {
     
     action = fun ctx script ->
         script.arguments
-        |> Seq.collect (Action.applyContextToArgument ctx >> Script.lines)
+        |> Seq.collect (Utils.applyContextToArgument ctx >> Script.lines)
         |> Seq.map Script.trimLineComment
         |> Script.trimLines
         |> Seq.map (FileInfo >> Parser.parseFromFile)

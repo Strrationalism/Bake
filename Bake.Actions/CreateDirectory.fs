@@ -29,6 +29,6 @@ let ``CreateDirectory`` = {
         """CreateDirectory {\n\t$Output\$Output\New1\n\t$Output\New2\n}"""
     ]
     
-    action = Action.singleBlockArgumentAction createDirectoryTask
+    action = Utils.singleBlockArgumentAction createDirectoryTask
 }
 

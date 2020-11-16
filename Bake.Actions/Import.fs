@@ -2,6 +2,7 @@
 
 open Bake
 open System.IO
+open Utils
 
 let importAction ctx actionName action =
     { ctx with
@@ -40,7 +41,7 @@ let Import = {
         
         script.arguments
         |> Seq.collect (
-            Action.applyContextToArgument ctx 
+            applyContextToArgument ctx 
             >> Script.lines
             >> Seq.map Script.trimLineComment)
         |> Script.trimLines

@@ -1,6 +1,7 @@
 ﻿module Bake.Actions.Zip
 
 open Bake
+open Utils
 open System.IO
 open System.IO.Compression
 
@@ -32,11 +33,11 @@ let Zip = {
     ]
 
     action = fun ctx script -> 
-        if script.arguments.Length <> 2 then raise <| Action.ActionUsageError "Zip必须有两个参数。"
+        verifyArgumentCount script 2
 
-        let targetZip = script.arguments.[0].Trim() |> Action.applyContextToArgument ctx
+        let targetZip = script.arguments.[0].Trim() |> applyContextToArgument ctx
         let files = 
-            script.arguments.[1] |> Action.applyContextToArgument ctx
+            script.arguments.[1] |> applyContextToArgument ctx
             |> Script.lines
             |> Seq.map Script.trimLineComment
             |> Script.trimLines

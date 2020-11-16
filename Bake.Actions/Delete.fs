@@ -44,7 +44,7 @@ let Delete = {
         """Delete { Some }     # 删除Some目录"""
     ]
     
-    action = Action.singleBlockArgumentAction (fun ctx script path ->
+    action = Utils.singleBlockArgumentAction (fun _ script path ->
         seq {
             if File.Exists path then
                 deleteFileTask script path

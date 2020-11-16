@@ -1,6 +1,7 @@
 ﻿module Bake.Actions.Download
 
 open Bake
+open Utils
 open System.Net
 
 let downloadFile (url: string) targetFile =
@@ -34,9 +35,9 @@ let Download = {
     ]
     
     action = fun ctx script ->
-        if script.arguments.Length <> 2 then raise <| Action.ActionUsageError "Download must be pass 2 arguments."
-        let targetDir = script.arguments.Head |> Action.applyContextToArgument ctx
-        Action.blockArgumentTaskPerLine (fun _ script url ->
+        verifyArgumentCount script 2
+        let targetDir = script.arguments.Head |> applyContextToArgument ctx
+        blockArgumentTaskPerLine (fun _ script url ->
             seq { downloadTask true targetDir script url }) ctx script script.arguments.[1],
         ctx
 }

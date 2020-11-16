@@ -17,11 +17,11 @@ let GetDateTime = {
     
     action = fun ctx script ->
         let len = script.arguments.Length
-        if len <> 2 && len <> 1 then raise <| Action.ActionUsageError "DateTime必须有一个或两个参数。"
+        if len <> 2 && len <> 1 then raise <| Action.ActionUsageError "DateTime must recive 1 or 2 argument(s)."
 
         let format = 
             script.arguments |> List.tryItem 1 
-            |> Option.map (Action.applyContextToArgument ctx)
+            |> Option.map (Utils.applyContextToArgument ctx)
             |> Option.defaultValue "YYYY-MM-DD--hh-mm-ss"
         let now = System.DateTime.Now
             

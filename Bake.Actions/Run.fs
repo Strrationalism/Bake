@@ -1,6 +1,7 @@
 ﻿module Bake.Actions.Run
 
 open Bake
+open Utils
 
 exception ExitCodeIsNotZero of int
 
@@ -30,12 +31,12 @@ let runTask echo waitForExit script (command: string seq) = {
 }
 
 let runAction echo waitForExit = fun ctx script -> 
-    if script.arguments.Length <> 1 then raise <| Action.ActionUsageError "Run must be pass 1 argument."
+    verifyArgumentCount script 1
 
     let command =
         script.arguments.Head
         |> Script.lines
-        |> Seq.map (Script.trimLineComment >> Action.applyContextToArgument ctx)
+        |> Seq.map (Script.trimLineComment >> applyContextToArgument ctx)
         |> Script.trimLines
     
     seq {
