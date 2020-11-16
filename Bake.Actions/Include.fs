@@ -22,7 +22,7 @@ let Include = {
         |> Seq.collect (Utils.applyContextToArgument ctx >> Script.lines)
         |> Seq.map Script.trimLineComment
         |> Script.trimLines
-        |> Seq.map (FileInfo >> Parser.parseFromFile)
+        |> Seq.map (Utils.resolveInputFile script >> Parser.parseFromFile)
         |> Seq.collect (function
         | Error e -> raise e
         | Ok x -> x)

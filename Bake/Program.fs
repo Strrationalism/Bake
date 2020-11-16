@@ -80,7 +80,7 @@ let main args =
         processError "Action Usage Error:%s" e
         Console.ResetColor ()
         -3
-    | Action.ActionException (script, ctx, e) ->
+    | Action.ActionException (e, script, ctx) ->
         processError "Action Error:%s\n\n%A\n\n%A\n\n%A" e.Message e script ctx
         Console.ResetColor ()
         -4

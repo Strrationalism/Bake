@@ -47,10 +47,10 @@ module Action =
     let getActionsFromDLL = Assembly.LoadFrom >> getActionsFromAssembly
 
     exception ActionNotFound of string
-    exception ActionException of Script * BakeActionContext * exn
+    exception ActionException of exn * Script * BakeActionContext
     let run ctx script =
         match ctx.actions |> Map.tryFind script.command with
         | None -> raise <| ActionNotFound script.command
         | Some action -> 
             try action.action ctx script
-            with e -> raise <| ActionException (script, ctx, e)
+            with e -> raise <| ActionException (e, script, ctx)
