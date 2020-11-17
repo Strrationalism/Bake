@@ -5,7 +5,7 @@ open Utils
 
 let setVariable ctx name value = 
     { ctx with
-        variables = ctx.variables |> Map.add name value }
+        variables = (name, value) :: ctx.variables |> List.sortByDescending (fst >> String.length)  }
 
 [<BakeAction>]
 let Set = {

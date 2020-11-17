@@ -44,10 +44,7 @@ let main args =
         //buildScript |> Seq.iter (printfn "%A")
 
         let context = {
-            variables = 
-                Map.empty
-                |> Map.add "StartDir" buildScriptFile.Directory.FullName
-                |> Map.add "CurrentDir" System.Environment.CurrentDirectory
+            variables = []
             actions = defaultActions
             loadedModules = Set.empty
 

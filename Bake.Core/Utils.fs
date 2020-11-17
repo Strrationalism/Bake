@@ -8,7 +8,7 @@ let verifyArgumentCount (script: Script) argc =
 
 let applyContextToArgument actionContext (text: string) =
     actionContext.variables
-    |> Map.fold (fun (text: string) k v -> text.Replace("$" + k, v)) text
+    |> List.fold (fun (text: string) (k, v) -> text.Replace("$" + k, v)) text
 
 // 根据{}参数中每一行单独创建一个Task
 let blockArgumentTaskPerLine createTask ctx (script: Script) =

@@ -16,7 +16,7 @@ let parseScripts fileInfo script =
         spaces >>. (many1Satisfy2L isFirst is "command" .>> spaces) <?> "command"
 
     let simpleArgument =    // 简单参数
-        let is c = isDigit c || isLetter c || isAnyOf ['$'; '\\'; '/'; '.'; '-'; '%'; '@'; '^'; '&'; '*'; ':'] c
+        let is c = isDigit c || isLetter c || isAnyOf ['$'; '\\'; '/'; '.'; '-'; '%'; '@'; '^'; '&'; '*'; ':'; '_'] c
         (many1SatisfyL is "simpleArgument" .>> spaces) <?> "simpleArgument"
 
     let warppedArgument =   // 被双引号包裹起来的参数

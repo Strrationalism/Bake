@@ -17,7 +17,7 @@ type BakeAction = {
 and Runner = BakeActionContext -> Script seq -> Task seq * BakeActionContext
 
 and BakeActionContext = {
-    variables : Map<string, string>
+    variables : (string * string) list
     actions : Map<string, BakeAction>
     loadedModules : string Set
     runChildBlock : Runner
