@@ -41,7 +41,22 @@ let Copy = {
 
         blockArgumentTaskPerLine (fun _ script ->
             Utils.matchInputFiles srcDir
-            >> Seq.map (fun (src, fileName) -> copyFileTask (Some fileName) script src <| targetDir + fileName))
+            >> Seq.collect (fun (src, fileName) -> 
+                if File.Exists src then
+                    seq { copyFileTask (Some fileName) script src <| targetDir + fileName }
+                else if Directory.Exists src then
+                    let src = src |> Utils.normalizeDirPath
+                    Directory.EnumerateDirectories (src, "", SearchOption.AllDirectories)
+                    |> Seq.map (fun x -> targetDir + x.[src.Length+1..])
+                    |> Seq.iter (Directory.CreateDirectory >> ignore)
+
+                    Directory.EnumerateFiles (src, "", SearchOption.AllDirectories)
+                    |> Seq.sortBy String.length
+                    |> Seq.map (fun path ->
+                        let fileName = path.[src.Length+1..]
+                        let dst = targetDir + fileName
+                        copyFileTask (Some fileName) script path dst)
+                else raise <| DirectoryNotFoundException src))
             ctx script script.arguments.[1],
         ctx
 }
