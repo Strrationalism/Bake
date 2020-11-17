@@ -41,7 +41,7 @@ let Zip = {
             |> Script.lines
             |> Seq.map Script.trimLineComment
             |> Script.trimLines
-            |> Seq.collect (Utils.mapPathToOutputPath script.scriptFile.DirectoryName)
+            |> Seq.collect (Utils.matchInputFiles script.scriptFile.DirectoryName)
             |> Seq.distinctBy snd
             |> Seq.toArray
 

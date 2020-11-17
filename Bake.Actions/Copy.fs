@@ -40,7 +40,7 @@ let Copy = {
         let srcDir = script.scriptFile.DirectoryName |> normalizeDirPath
 
         blockArgumentTaskPerLine (fun _ script ->
-            Utils.mapPathToOutputPath srcDir
+            Utils.matchInputFiles srcDir
             >> Seq.map (fun (src, fileName) -> copyFileTask (Some fileName) script src <| targetDir + fileName))
             ctx script script.arguments.[1],
         ctx

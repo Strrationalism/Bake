@@ -24,7 +24,8 @@ let singleBlockArgumentAction createTask ctx script =
     blockArgumentTaskPerLine createTask ctx script <| script.arguments.Head,
     ctx
 
-let mapPathToOutputPath (srcPath: string) (namePattern: string) =
+
+let matchInputFiles (srcPath: string) (namePattern: string) =
     let namePattern = namePattern.Replace('\\','/')
     let srcPath = srcPath.TrimEnd('\\', '/') + "/" + namePattern.[..(-1 + namePattern.LastIndexOf '/')]
     let srcPath = srcPath.Trim('\\', '/') + "/"
