@@ -5,7 +5,12 @@ open Utils
 
 exception ExitCodeIsNotZero of int
 
-let run waitForExit workingDir (cmd: string) =
+type Options = {
+    hidden : bool
+    waitForExit : bool
+}
+
+let run options workingDir (cmd: string) =
     let cmd, args = let cells = cmd.Split ' ' in cells.[0], cells.[1..]
     let args = Array.reduce (fun a b -> a + " " + b) args
 
@@ -14,11 +19,13 @@ let run waitForExit workingDir (cmd: string) =
     startInfo.Arguments <- args
     startInfo.WorkingDirectory <- workingDir
 
+    if options.hidden then startInfo.RedirectStandardOutput <- true
+
     let prc = System.Diagnostics.Process.Start startInfo
-    if waitForExit then prc.WaitForExit ()
+    if options.waitForExit then prc.WaitForExit ()
     if prc.ExitCode <> 0 then raise <| ExitCodeIsNotZero prc.ExitCode
 
-let runTask waitForExit script (command: string seq) = {
+let runTask options script (command: string seq) = {
     inputFiles = Seq.empty
     outputFiles = Seq.empty
     dirty = true
@@ -26,10 +33,10 @@ let runTask waitForExit script (command: string seq) = {
     run = fun () ->
         command
         |> Seq.iter (fun cmd ->
-            run waitForExit script.scriptFile.Directory.FullName cmd)
+            run options script.scriptFile.Directory.FullName cmd)
 }
 
-let runAction waitForExit = fun ctx script -> 
+let runAction options = fun ctx script -> 
     verifyArgumentCount script 1
 
     let command =
@@ -39,7 +46,7 @@ let runAction waitForExit = fun ctx script ->
         |> Script.trimLines
     
     seq {
-        runTask waitForExit script command
+        runTask options script command
     }, ctx
 
 [<BakeAction>]
@@ -54,5 +61,21 @@ let Run = {
         """Run { ls }"""
     ]
     
-    action = runAction true
+    action = runAction { hidden = false; waitForExit = true }
+}
+
+
+[<BakeAction>]
+let RunHidden = {
+    help = "启动命令并等待其完成，隐藏输出内容"
+
+    usage = [
+        """RunHidden <命令>"""
+    ]
+
+    example = [
+        """RunHidden { ls }"""
+    ]
+    
+    action = runAction { hidden = false; waitForExit = true }
 }

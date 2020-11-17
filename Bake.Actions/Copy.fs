@@ -39,24 +39,32 @@ let Copy = {
         let targetDir = normalizeDirPath targetDir
         let srcDir = script.scriptFile.DirectoryName |> normalizeDirPath
 
-        blockArgumentTaskPerLine (fun _ script ->
-            Utils.matchInputFiles srcDir
-            >> Seq.collect (fun (src, fileName) -> 
-                if File.Exists src then
-                    seq { copyFileTask (Some fileName) script src <| targetDir + fileName }
-                else if Directory.Exists src then
-                    let src = src |> Utils.normalizeDirPath
-                    Directory.EnumerateDirectories (src, "", SearchOption.AllDirectories)
-                    |> Seq.map (fun x -> targetDir + x.[src.Length+1..])
-                    |> Seq.iter (Directory.CreateDirectory >> ignore)
+        blockArgumentTaskPerLine (fun _ script src ->
+            if Directory.Exists src then
+                let dirName = 
+                    let p = src.LastIndexOf '/'
+                    let p = p + 1
+                    src.[p..]
+                let src = src |> Utils.normalizeDirPath
+                Directory.CreateDirectory (targetDir + dirName) |> ignore
+                Directory.EnumerateDirectories (src, "", SearchOption.AllDirectories)
+                |> Seq.map (fun x -> targetDir + dirName + "/" + x.[src.Length..])
+                |> Seq.iter (Directory.CreateDirectory >> ignore)
 
-                    Directory.EnumerateFiles (src, "", SearchOption.AllDirectories)
-                    |> Seq.sortBy String.length
-                    |> Seq.map (fun path ->
-                        let fileName = path.[src.Length+1..]
-                        let dst = targetDir + fileName
-                        copyFileTask (Some fileName) script path dst)
-                else raise <| DirectoryNotFoundException src))
+                Directory.EnumerateFiles (src, "", SearchOption.AllDirectories)
+                |> Seq.sortBy String.length
+                |> Seq.map (fun path ->
+                    let fileName = path.[src.Length..]
+                    let dst = targetDir + dirName + "/" + fileName
+                    copyFileTask (Some fileName) script path dst)
+            else
+                src
+                |> Utils.matchInputFiles srcDir
+                |> Seq.collect (fun (src, fileName) -> 
+                    if File.Exists src then
+                        seq { copyFileTask (Some fileName) script src <| targetDir + fileName }
+                
+                    else raise <| DirectoryNotFoundException src))
             ctx script script.arguments.[1],
         ctx
 }
