@@ -6,7 +6,6 @@ open Utils
 exception ExitCodeIsNotZero of int
 
 type Options = {
-    hidden : bool
     waitForExit : bool
 }
 
@@ -18,8 +17,6 @@ let run options workingDir (cmd: string) =
     startInfo.FileName <- cmd
     startInfo.Arguments <- args
     startInfo.WorkingDirectory <- workingDir
-
-    if options.hidden then startInfo.RedirectStandardOutput <- true
 
     let prc = System.Diagnostics.Process.Start startInfo
     if options.waitForExit then prc.WaitForExit ()
@@ -61,21 +58,6 @@ let Run = {
         """Run { ls }"""
     ]
     
-    action = runAction { hidden = false; waitForExit = true }
+    action = runAction { waitForExit = true }
 }
 
-
-[<BakeAction>]
-let RunHidden = {
-    help = "启动命令并等待其完成，隐藏输出内容"
-
-    usage = [
-        """RunHidden <命令>"""
-    ]
-
-    example = [
-        """RunHidden { ls }"""
-    ]
-    
-    action = runAction { hidden = false; waitForExit = true }
-}

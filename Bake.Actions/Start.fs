@@ -14,5 +14,5 @@ let Start = {
         """Start { ls }"""
     ]
     
-    action = Run.runAction { hidden = false; waitForExit = false }
+    action = Run.runAction { waitForExit = false }
 }
