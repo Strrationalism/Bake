@@ -14,5 +14,5 @@ let Start = {
         """Start { ls }"""
     ]
     
-    action = Run.runAction true false
+    action = Run.runAction false
 }

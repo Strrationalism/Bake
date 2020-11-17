@@ -18,7 +18,7 @@ let run waitForExit workingDir (cmd: string) =
     if waitForExit then prc.WaitForExit ()
     if prc.ExitCode <> 0 then raise <| ExitCodeIsNotZero prc.ExitCode
 
-let runTask echo waitForExit script (command: string seq) = {
+let runTask waitForExit script (command: string seq) = {
     inputFiles = Seq.empty
     outputFiles = Seq.empty
     dirty = true
@@ -26,11 +26,10 @@ let runTask echo waitForExit script (command: string seq) = {
     run = fun () ->
         command
         |> Seq.iter (fun cmd ->
-            if echo then lock stdout (fun () -> printfn "%s" cmd)
             run waitForExit script.scriptFile.Directory.FullName cmd)
 }
 
-let runAction echo waitForExit = fun ctx script -> 
+let runAction waitForExit = fun ctx script -> 
     verifyArgumentCount script 1
 
     let command =
@@ -40,7 +39,7 @@ let runAction echo waitForExit = fun ctx script ->
         |> Script.trimLines
     
     seq {
-        runTask echo waitForExit script command
+        runTask waitForExit script command
     }, ctx
 
 [<BakeAction>]
@@ -55,5 +54,5 @@ let Run = {
         """Run { ls }"""
     ]
     
-    action = runAction true true
+    action = runAction true
 }
