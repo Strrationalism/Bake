@@ -35,6 +35,10 @@ Action CopyProject projectName {
 }
 
 Parallel {
+	Copy "$Output" {
+		Bake.Core/bin/Release/*.nupkg
+		Bake.Parser/bin/Release/*.nupkg
+	}
 	Zip "$Output/Bake-bin-windows-$DateTime.zip" {
 		Bake/bin/Release/$Target-windows/win-x64/publish/*
 	}

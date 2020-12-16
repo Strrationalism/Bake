@@ -6,6 +6,12 @@
 
   <PropertyGroup>
     <InvariantGlobalization>true</InvariantGlobalization>
+    <Authors>Strrationalism</Authors>
+    <Company>Strrationalism</Company>
+    <Description>The core library for building system "Bake".</Description>
+    <PackageProjectUrl>https://github.com/Strrationalism/Bake</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Strrationalism/Bake</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>

@@ -6,6 +6,11 @@
 
   <PropertyGroup>
     <InvariantGlobalization>true</InvariantGlobalization>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Strrationalism</Authors>
+    <Description>The script parser for building system "Bake".</Description>
+    <PackageProjectUrl>https://github.com/Strrationalism/Bake</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Strrationalism/Bake</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>

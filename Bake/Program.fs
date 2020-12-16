@@ -10,9 +10,6 @@ let processError fmt =
 [<EntryPoint>]
 let main args =
     try
-        try
-            Console.SetWindowSize(90,40)
-        with _ -> ()
         let buildScriptFile =
             match args with
             | [||] -> 
