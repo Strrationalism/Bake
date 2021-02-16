@@ -30,10 +30,12 @@ let matchInputFiles (srcPath: string) (namePattern: string) =
     let srcPath = srcPath.TrimEnd('\\', '/') + "/" + namePattern.[..(-1 + namePattern.LastIndexOf '/')]
     let srcPath = srcPath.Trim('\\', '/') + "/"
     let namePattern = namePattern.[1 + namePattern.LastIndexOf '/' ..]
-    Directory.EnumerateDirectories (srcPath, "", SearchOption.AllDirectories)
-    |> Seq.collect (fun x -> Directory.EnumerateFiles (x, namePattern, SearchOption.TopDirectoryOnly))
-    |> Seq.append (Directory.EnumerateFiles (srcPath, namePattern, SearchOption.TopDirectoryOnly))
-    |> Seq.map (fun x -> x, x.[srcPath.Length..])
+    if namePattern.Contains("*") || namePattern.Contains("?") then
+        Directory.EnumerateDirectories (srcPath, "", SearchOption.AllDirectories)
+        |> Seq.collect (fun x -> Directory.EnumerateFiles (x, namePattern, SearchOption.TopDirectoryOnly))
+        |> Seq.append (Directory.EnumerateFiles (srcPath, namePattern, SearchOption.TopDirectoryOnly))
+        |> Seq.map (fun x -> x, x.[srcPath.Length..])
+    else seq { srcPath + namePattern, namePattern }
 
 let stringReducing f (s: string seq) =
     match s with
