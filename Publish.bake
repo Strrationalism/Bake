@@ -27,10 +27,13 @@ CreateDirectory {
 }
 
 Action CopyProject projectName {
-	Copy "$Output/src/projectName" {
-		projectName/*.fs
-		projectName/*.fsproj
-		projectName/Properties
+	Atomic {
+		Copy "$Output/src/projectName" {
+			projectName/*.fs
+			projectName/*.fsproj
+		}
+		
+		Delete "$Output/src/projectName/obj"
 	}
 }
 
@@ -63,7 +66,8 @@ Parallel {
 			Copy "$Output/src" {
 				LICENSE
 				Bake.sln
-				Package.bake
+				Clean.bake
+				Publish.bake
 				README.md
 			}
 		}

@@ -7,6 +7,8 @@ let processError fmt =
     Console.Beep ()
     printfn fmt
 
+exception BakeScriptNotFound
+
 [<EntryPoint>]
 let main args =
     try
@@ -19,7 +21,10 @@ let main args =
                     "Build.bake"
                     "Publish.bake"
                 ]
-                |> List.find System.IO.File.Exists
+                |> List.tryFind System.IO.File.Exists
+                |> function
+                | Some x -> x
+                | None -> raise BakeScriptNotFound
             | [|a|] -> [ a; a + ".bake" ] |> List.find System.IO.File.Exists
             | _ -> failwithf "Not support"
             |> System.IO.FileInfo
@@ -63,25 +68,29 @@ let main args =
         0
     with 
     | Parser.ParsingError e -> 
-        processError "Parsing Error:%s" e
+        processError "Parsing Error: %s" e
         Console.ResetColor ()
         -1
     | Action.ActionNotFound e -> 
-        processError "Action Not Found:%s" e
+        processError "Action Not Found: %s" e
         Console.ResetColor ()
         -2
     | Action.ActionUsageError e -> 
-        processError "Action Usage Error:%s" e
+        processError "Action Usage Error: %s" e
         Console.ResetColor ()
         -3
-    | Action.ActionException (e, script, ctx) ->
-        processError "Action Error:%s\n\n%A\n\n%A\n\n%A" e.Message e script ctx
+    | Action.ActionException (e, _, ctx) ->
+        processError "Action Error: %A\nContext: \n%A" e ctx
         Console.ResetColor ()
         -4
     | Task.TaskException (task, e) ->
-        processError "Task Error:%s\n\n%A\n\n%A" e.Message e task
+        processError "Task Error: %s\n\n%A\n\n%A" e.Message e task
         Console.ResetColor ()
         -5
+    | BakeScriptNotFound ->
+        processError "Bake script not found."
+        Console.ResetColor ()
+        -6
     | e -> 
         processError "Error:%A" e 
         Console.ResetColor ()
