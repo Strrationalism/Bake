@@ -11,6 +11,7 @@
     <Description>The script parser for building system "Bake".</Description>
     <PackageProjectUrl>https://github.com/Strrationalism/Bake</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Strrationalism/Bake</RepositoryUrl>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

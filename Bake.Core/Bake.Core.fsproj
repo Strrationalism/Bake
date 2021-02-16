@@ -12,6 +12,7 @@
     <PackageProjectUrl>https://github.com/Strrationalism/Bake</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Strrationalism/Bake</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
